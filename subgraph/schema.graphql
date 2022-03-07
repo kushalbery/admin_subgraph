@@ -1,0 +1,13 @@
+type ExampleEntity @entity {
+  id: ID!
+  count: BigInt!
+  owner: Bytes! # address
+  spender: Bytes! # address
+}
+
+type CreatedFPMM @entity {
+  id: ID!
+  creator: Bytes!
+  tokenName: String!
+  tokenSymbol: String!
+}

@@ -1,0 +1,41 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: FPMM
+    network: mainnet
+    source:
+      address: "0x32Cf1f3a98aeAF57b88b3740875D19912A522c1A"
+      abi: FPMM
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - FPMMBuy
+        - FPMMCreated
+        - FPMMFundingAdded
+        - FPMMFundingRemoved
+        - FPMMSell
+        - Transfer
+      abis:
+        - name: FPMM
+          file: ./abis/FPMM.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: FPMMBuy(indexed address,uint256,uint256,indexed uint256,uint256)
+          handler: handleFPMMBuy
+        - event: FPMMCreated(indexed address,string,string,address,address,bytes32,uint256)
+          handler: handleFPMMCreated
+        - event: FPMMFundingAdded(indexed address,uint256[],uint256)
+          handler: handleFPMMFundingAdded
+        - event: FPMMFundingRemoved(indexed address,uint256[],uint256,uint256)
+          handler: handleFPMMFundingRemoved
+        - event: FPMMSell(indexed address,uint256,uint256,indexed uint256,uint256)
+          handler: handleFPMMSell
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

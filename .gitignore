@@ -1,0 +1,5 @@
+./graph-node
+subgraph/node_modules/
+subgraph/build/
+*abi.json
+.DS_Store
