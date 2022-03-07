@@ -21,8 +21,7 @@ ganache-cli -h 0.0.0.0 -d  --account_keys_path=keys.json -l=15000000
 Clone and Run local graph node
 
 ```sh
-chmod +x ./graph-node.sh
-./graph-node.sh
+docker-compose up
 ```
 
 ### Step 4
