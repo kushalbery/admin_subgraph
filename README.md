@@ -1,3 +1,20 @@
+## Prerequisite
+
+Install Ganache-Cli
+
+```sh
+npm i -g ganache-cli
+```
+
+Install Yarn
+
+```sh
+brew install yarn
+```
+
+Docker
+Node
+
 ## Installing and Running
 
 ### Step 1
