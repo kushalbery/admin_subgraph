@@ -2,7 +2,7 @@
 
 cd subgraph
 
-npm ci
+# npm ci
 
 yarn codegen
 

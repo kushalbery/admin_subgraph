@@ -12,6 +12,13 @@ Install Yarn
 brew install yarn
 ```
 
+Install Graph
+
+```sh
+# NPM
+npm install -g @graphprotocol/graph-cli
+```
+
 Docker
 Node
 
