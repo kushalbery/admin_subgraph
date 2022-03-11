@@ -8,6 +8,6 @@ yarn codegen
 
 graph build
 
-yarn create-local
+# yarn create-local
 
-yarn deploy-local
+# yarn deploy-local
