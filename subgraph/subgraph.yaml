@@ -2,40 +2,108 @@ specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
-    name: FPMM
+  - kind: ethereum/contract
+    name: ConditionalTokens
     network: mainnet
     source:
-      address: "0x32Cf1f3a98aeAF57b88b3740875D19912A522c1A"
-      abi: FPMM
+      address: "0x8948f754273C75a25e100E42EA4B639472B02CE4"
+      abi: ConditionalTokens
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Approval
-        - FPMMBuy
-        - FPMMCreated
-        - FPMMFundingAdded
-        - FPMMFundingRemoved
-        - FPMMSell
-        - Transfer
+        - Condition
+        - FixedProductMarketMaker
+        - Split
+        - Merge
+        - Redemption
       abis:
-        - name: FPMM
-          file: ./abis/FPMM.json
+        - name: ConditionalTokens
+          file: ./abis/ConditionalTokens.json
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
       eventHandlers:
-        - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval
-        - event: FPMMBuy(indexed address,uint256,uint256,indexed uint256,uint256)
-          handler: handleFPMMBuy
+        - event: ConditionPreparation(indexed bytes32,indexed address,indexed bytes32,uint256)
+          handler: handleConditionPreparation
+        - event: ConditionResolution(indexed bytes32,indexed address,indexed bytes32,uint256,uint256[])
+          handler: handleConditionResolution
+        - event: PositionSplit(indexed address,address,indexed bytes32,indexed bytes32,uint256[],uint256)
+          handler: handlePositionSplit
+        - event: PositionsMerge(indexed address,address,indexed bytes32,indexed bytes32,uint256[],uint256)
+          handler: handlePositionsMerge
+        - event: PayoutRedemption(indexed address,indexed address,indexed bytes32,bytes32,uint256[],uint256)
+          handler: handlePayoutRedemption
+      file: ./src/ConditionalTokensMapping.ts
+  - kind: ethereum/contract
+    name: FixedProductMarketMakerFactory
+    network: mainnet
+    source:
+      address: "0xA0110b394222C4e297Fa83A22068F44CA4Ecac80"
+      abi: FixedProductMarketMakerFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - FixedProductMarketMaker
+      abis:
+        - name: FixedProductMarketMakerFactory
+          file: ./abis/FixedProductMarketMakerFactory.json
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
+      eventHandlers:
+        - event: FixedProductMarketMakerCreation(indexed address,address,indexed address,indexed address,bytes32,uint256)
+          handler: handleFixedProductMarketMakerCreation
+      file: ./src/FixedProductMarketMakerFactoryMapping.ts
+templates:
+  - name: FixedProductMarketMaker
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: FixedProductMarketMaker
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - FixedProductMarketMaker
+        - FpmmFundingAddition
+        - FpmmFundingRemoval
+        - FpmmPoolMembership
+        - Transaction
+        - MarketPosition
+      abis:
+        - name: FixedProductMarketMaker
+          file: ./abis/FixedProductMarketMaker.json
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
+      eventHandlers:
         - event: FPMMCreated(indexed address,string,string,address,address,bytes32,uint256)
           handler: handleFPMMCreated
         - event: FPMMFundingAdded(indexed address,uint256[],uint256)
-          handler: handleFPMMFundingAdded
+          handler: handleFundingAdded
         - event: FPMMFundingRemoved(indexed address,uint256[],uint256,uint256)
-          handler: handleFPMMFundingRemoved
+          handler: handleFundingRemoved
+        - event: FPMMBuy(indexed address,uint256,uint256,indexed uint256,uint256)
+          handler: handleBuy
         - event: FPMMSell(indexed address,uint256,uint256,indexed uint256,uint256)
-          handler: handleFPMMSell
+          handler: handleSell
         - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: ./src/mapping.ts
+          handler: handlePoolShareTransfer
+      file: ./src/FixedProductMarketMakerMapping.ts
+  - name: ERC20Detailed
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: ERC20Detailed
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
+      file: ./src/empty.ts
