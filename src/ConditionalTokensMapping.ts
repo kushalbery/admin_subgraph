@@ -169,6 +169,7 @@ export function handleConditionResolution(event: ConditionResolution): void {
   global.numClosedConditions += 1;
   global.save();
 
+  // TODO
   // if (condition.resolutionTimestamp != null || condition.payouts != null) {
   if (condition.resolutionTimestamp || condition.payouts) {
     log.error('should not be able to resolve condition {} more than once', [
