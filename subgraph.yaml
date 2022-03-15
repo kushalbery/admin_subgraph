@@ -6,7 +6,7 @@ dataSources:
     name: ConditionalTokens
     network: mainnet
     source:
-      address: "0x8948f754273C75a25e100E42EA4B639472B02CE4"
+      address: "0xFA33c8EF8b5c4f3003361c876a298D1DB61ccA4e"
       abi: ConditionalTokens
     mapping:
       kind: ethereum/events
@@ -39,7 +39,7 @@ dataSources:
     name: FixedProductMarketMakerFactory
     network: mainnet
     source:
-      address: "0xA0110b394222C4e297Fa83A22068F44CA4Ecac80"
+      address: "0x9c62311E2B81AE323716b9783D08DfDBE1802DD4"
       abi: FixedProductMarketMakerFactory
     mapping:
       kind: ethereum/events

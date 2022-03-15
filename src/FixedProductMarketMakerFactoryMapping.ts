@@ -71,18 +71,24 @@ export function handleFixedProductMarketMakerCreation(
   let addressHexString = address.toHexString();
   let conditionalTokensAddress = event.params.conditionalTokens.toHexString();
 
-  if (
-    conditionalTokensAddress !=
-    '0x8948f754273C75a25e100E42EA4B639472B02CE4'
-  ) {
-    log.info('cannot index market maker {}: using conditional tokens {}', [
-      addressHexString,
-      conditionalTokensAddress,
-    ]);
-    return;
-  }
+  log.info('$$$$$$$$$$$$$$$$$$addressHexString$$$$$$$$$$$$$$ {}', [addressHexString]);
+  // if (
+  //   conditionalTokensAddress !=
+  //   '0x8948f754273C75a25e100E42EA4B639472B02CE4'
+  // ) {
+  //   log.info('cannot index market maker {}: using conditional tokens {}', [
+  //     addressHexString,
+  //     conditionalTokensAddress,
+  //   ]);
+  //   return;
+  // }
+
+
+  log.info('FPMM {}: conditional tokens {}', [addressHexString, conditionalTokensAddress]);
 
   let fixedProductMarketMaker = new FixedProductMarketMaker(addressHexString);
+
+  log.info('I am here', []);
 
   fixedProductMarketMaker.creator = event.params.creator;
   fixedProductMarketMaker.creationTimestamp = event.block.timestamp;
@@ -92,28 +98,28 @@ export function handleFixedProductMarketMakerCreation(
   fixedProductMarketMaker.collateralToken = event.params.collateralToken.toHexString();
   fixedProductMarketMaker.fee = event.params.fee;
 
-  let conditionIds = event.params.conditionId;
-  let outcomeTokenCount = 1;
-  // for (let i = 0; i < conditionIds.length; i += 1) {
-    let conditionIdStr = conditionIds.toHexString();
+  // let conditionIds = event.params.conditionId;
+  // let outcomeTokenCount = 1;
+  // // for (let i = 0; i < conditionIds.length; i += 1) {
+  //   let conditionIdStr = conditionIds.toHexString();
 
-    let condition = Condition.load(conditionIdStr);
-    if (condition == null) {
-      log.error('failed to create market maker {}: condition {} not prepared', [
-        addressHexString,
-        conditionIdStr,
-      ]);
-      return;
-    }
+  //   let condition = Condition.load(conditionIdStr);
+  //   if (condition == null) {
+  //     log.error('failed to create market maker {}: condition {} not prepared', [
+  //       addressHexString,
+  //       conditionIdStr,
+  //     ]);
+  //     return;
+  //   }
 
-    outcomeTokenCount *= condition.outcomeSlotCount;
-    condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
-      [addressHexString],
-    );
-    condition.save();
+  //   outcomeTokenCount *= condition.outcomeSlotCount;
+  //   condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
+  //     [addressHexString],
+  //   );
+  //   condition.save();
   // }
 
-  fixedProductMarketMaker.outcomeSlotCount = outcomeTokenCount;
+  fixedProductMarketMaker.outcomeSlotCount = 2;
 
   fixedProductMarketMaker = initialiseFPMM(fixedProductMarketMaker, event);
   fixedProductMarketMaker.save();

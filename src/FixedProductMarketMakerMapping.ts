@@ -5,7 +5,8 @@ import {
   FpmmFundingAddition,
   FpmmFundingRemoval,
   Transaction,
-  CreatedFPMM
+  CreatedFPMM,
+  Condition
 } from '../generated/schema';
 import {
   FPMMFundingAdded,
@@ -380,13 +381,39 @@ export function handlePoolShareTransfer(event: Transfer): void {
 }
 
 export function handleFPMMCreated(event: FPMMCreated): void {
-  let entity = CreatedFPMM.load(event.params.conditionIds.toHex())
+  log.info('Reached FPMM', []);
+  let address = event.address;
+  let addressHexString = address.toHexString();
+  let entity = CreatedFPMM.load(address.toHex())
+  log.info('$$$$$$$$$$$$$$$$$$addressHexString$$$$$$$$$$$$$$ {}', [addressHexString]);
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
+  log.info('checking if statement FPMM', []);
   if (!entity) {
-    entity = new CreatedFPMM(event.params.conditionIds.toHex())
+    entity = new CreatedFPMM(event.address.toHex())
+    log.info('Inside if condition FPMM', []);
   }
+
+  let conditionIds = event.params.conditionIds;
+  let outcomeTokenCount = 1;
+
+    let conditionIdStr = conditionIds.toHexString();
+
+    let condition = Condition.load(conditionIdStr);
+    if (condition == null) {
+      log.error('failed to create market maker {}: condition {} not prepared', [
+        addressHexString,
+        conditionIdStr,
+      ]);
+      return;
+    }
+
+    outcomeTokenCount *= condition.outcomeSlotCount;
+    condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
+      [addressHexString],
+    );
+    condition.save();
 
   // Entity fields can be set based on event parameters
   entity.creator = event.params.creator
@@ -394,5 +421,6 @@ export function handleFPMMCreated(event: FPMMCreated): void {
   entity.tokenSymbol = event.params.tokenSymbol
 
   // Entities can be written to the store with `.save()`
+  log.info('About to save FPMM', []);
   entity.save()
 }
