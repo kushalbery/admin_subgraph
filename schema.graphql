@@ -325,3 +325,21 @@ type FpmmPoolMembership @entity {
   "Amount of liquidity tokens owned by funder"
   amount: BigInt!
 }
+
+type UserPlayerPnLTransaction @entity {
+  "in userAddress-questionId-outcomeIndex form, ex : aaa-bbb-0"
+  id: ID!
+  "net investment amount of user"
+  investmentAmount: BigInt!
+  "net tokens remaining with user for corresponding questionId & outcomeIndex"
+  tokens: BigInt!
+}
+
+type UserPlayerTourPnLTransaction @entity {
+  "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
+  id: ID!
+  "net investment amount of user"
+  investmentAmount: BigInt!
+  "net tokens remaining with user for corresponding questionId & outcomeIndex"
+  tokens: BigInt!
+}
