@@ -1,9 +1,5 @@
 #!/bin/bash
 
-cd subgraph
-
-# npm ci
-
 yarn codegen
 
 graph build
