@@ -87,7 +87,7 @@ chmod +x ./start.sh
         }
       }
     }
-        ```
+    ```
     Replace timestamp_lt value
     ````
 
