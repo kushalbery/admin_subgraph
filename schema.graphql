@@ -326,7 +326,13 @@ type FpmmPoolMembership @entity {
   amount: BigInt!
 }
 
-type UserPlayerPnLTransaction @entity {
+type UserPnL @entity {
+  id: ID!
+  questionId: String!
+  tours: [UserTourPlayerPnLTransaction!]! @derivedFrom(field: "userPnl")
+}
+
+type UserTourPlayerPnLTransaction @entity {
   "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
   id: ID!
   userId: String!
@@ -335,4 +341,16 @@ type UserPlayerPnLTransaction @entity {
   investmentAmount: BigInt!
   "net tokens remaining with user for corresponding questionId & outcomeIndex"
   tokens: BigInt!
+  userPnl: UserPnL!
 }
+
+# type UserPlayerPnLTransaction @entity {
+#   "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
+#   id: ID!
+#   userId: String!
+#   questionId: String!
+#   "net investment amount of user"
+#   investmentAmount: BigInt!
+#   "net tokens remaining with user for corresponding questionId & outcomeIndex"
+#   tokens: BigInt!
+# }

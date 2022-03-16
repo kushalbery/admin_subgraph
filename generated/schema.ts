@@ -1900,7 +1900,60 @@ export class FpmmPoolMembership extends Entity {
   }
 }
 
-export class UserPlayerPnLTransaction extends Entity {
+export class UserPnL extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("questionId", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserPnL entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save UserPnL entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("UserPnL", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserPnL | null {
+    return changetype<UserPnL | null>(store.get("UserPnL", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get questionId(): string {
+    let value = this.get("questionId");
+    return value!.toString();
+  }
+
+  set questionId(value: string) {
+    this.set("questionId", Value.fromString(value));
+  }
+
+  get tours(): Array<string> {
+    let value = this.get("tours");
+    return value!.toStringArray();
+  }
+
+  set tours(value: Array<string>) {
+    this.set("tours", Value.fromStringArray(value));
+  }
+}
+
+export class UserTourPlayerPnLTransaction extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -1909,27 +1962,28 @@ export class UserPlayerPnLTransaction extends Entity {
     this.set("questionId", Value.fromString(""));
     this.set("investmentAmount", Value.fromBigInt(BigInt.zero()));
     this.set("tokens", Value.fromBigInt(BigInt.zero()));
+    this.set("userPnl", Value.fromString(""));
   }
 
   save(): void {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save UserPlayerPnLTransaction entity without an ID"
+      "Cannot save UserTourPlayerPnLTransaction entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save UserPlayerPnLTransaction entity with non-string ID. " +
+        "Cannot save UserTourPlayerPnLTransaction entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("UserPlayerPnLTransaction", id.toString(), this);
+      store.set("UserTourPlayerPnLTransaction", id.toString(), this);
     }
   }
 
-  static load(id: string): UserPlayerPnLTransaction | null {
-    return changetype<UserPlayerPnLTransaction | null>(
-      store.get("UserPlayerPnLTransaction", id)
+  static load(id: string): UserTourPlayerPnLTransaction | null {
+    return changetype<UserTourPlayerPnLTransaction | null>(
+      store.get("UserTourPlayerPnLTransaction", id)
     );
   }
 
@@ -1976,5 +2030,14 @@ export class UserPlayerPnLTransaction extends Entity {
 
   set tokens(value: BigInt) {
     this.set("tokens", Value.fromBigInt(value));
+  }
+
+  get userPnl(): string {
+    let value = this.get("userPnl");
+    return value!.toString();
+  }
+
+  set userPnl(value: string) {
+    this.set("userPnl", Value.fromString(value));
   }
 }

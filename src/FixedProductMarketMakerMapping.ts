@@ -7,7 +7,8 @@ import {
   Transaction,
   CreatedFPMM,
   Condition,
-  UserPlayerPnLTransaction,
+  UserTourPlayerPnLTransaction,
+  UserPnL,
 } from "../generated/schema";
 import {
   FPMMFundingAdded,
@@ -55,14 +56,19 @@ function updateUserPlayerPnLTransaction(
   tokensTraded: BigInt,
   txnType: string
 ): void {
-  let userPlayerPnLTransaction = UserPlayerPnLTransaction.load(id);
+  let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
-    let newPnLTourTxn = new UserPlayerPnLTransaction(id);
+    let userPnlObj = new UserPnL(userId);
+    userPnlObj.questionId = questionId;
+
+    let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
     newPnLTourTxn.questionId = questionId;
     newPnLTourTxn.userId = userId;
     newPnLTourTxn.investmentAmount = tradeAmount;
     newPnLTourTxn.tokens = tokensTraded;
+    newPnLTourTxn.userPnl = userId;
     newPnLTourTxn.save();
+    userPnlObj.save();
     return;
   }
   if (txnType === "Buy") {
