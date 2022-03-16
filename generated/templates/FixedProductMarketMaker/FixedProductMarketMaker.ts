@@ -210,6 +210,40 @@ export class FPMMSell__Params {
   }
 }
 
+export class LongShortCurrentPrice extends ethereum.Event {
+  get params(): LongShortCurrentPrice__Params {
+    return new LongShortCurrentPrice__Params(this);
+  }
+}
+
+export class LongShortCurrentPrice__Params {
+  _event: LongShortCurrentPrice;
+
+  constructor(event: LongShortCurrentPrice) {
+    this._event = event;
+  }
+
+  get currentlongprice(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get currentshortprice(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get questionId(): Bytes {
+    return this._event.parameters[3].value.toBytes();
+  }
+
+  get fpmm(): Address {
+    return this._event.parameters[4].value.toAddress();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -626,19 +660,111 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
-  getPrices(): Array<BigInt> {
-    let result = super.call("getPrices", "getPrices():(uint256[])", []);
+  getlongPrices(): BigInt {
+    let result = super.call("getlongPrices", "getlongPrices():(uint256)", []);
 
-    return result[0].toBigIntArray();
+    return result[0].toBigInt();
   }
 
-  try_getPrices(): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall("getPrices", "getPrices():(uint256[])", []);
+  try_getlongPrices(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getlongPrices",
+      "getlongPrices():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getlongtradevolume(): BigInt {
+    let result = super.call(
+      "getlongtradevolume",
+      "getlongtradevolume():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getlongtradevolume(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getlongtradevolume",
+      "getlongtradevolume():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getshortPrices(): BigInt {
+    let result = super.call("getshortPrices", "getshortPrices():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getshortPrices(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getshortPrices",
+      "getshortPrices():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getshorttradevolume(): BigInt {
+    let result = super.call(
+      "getshorttradevolume",
+      "getshorttradevolume():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getshorttradevolume(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getshorttradevolume",
+      "getshorttradevolume():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  gettotalliquidity(): BigInt {
+    let result = super.call(
+      "gettotalliquidity",
+      "gettotalliquidity():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_gettotalliquidity(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "gettotalliquidity",
+      "gettotalliquidity():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   increaseAllowance(spender: Address, addedValue: BigInt): boolean {
@@ -690,6 +816,29 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  longtradevolume(): BigInt {
+    let result = super.call(
+      "longtradevolume",
+      "longtradevolume():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_longtradevolume(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "longtradevolume",
+      "longtradevolume():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   name(): string {
@@ -801,6 +950,29 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  shorttradevolume(): BigInt {
+    let result = super.call(
+      "shorttradevolume",
+      "shorttradevolume():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_shorttradevolume(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "shorttradevolume",
+      "shorttradevolume():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   supportsInterface(interfaceId: Bytes): boolean {
     let result = super.call(
       "supportsInterface",
@@ -847,6 +1019,25 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
 
   try_totalSupply(): ethereum.CallResult<BigInt> {
     let result = super.tryCall("totalSupply", "totalSupply():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  totalliquidity(): BigInt {
+    let result = super.call("totalliquidity", "totalliquidity():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_totalliquidity(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "totalliquidity",
+      "totalliquidity():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }

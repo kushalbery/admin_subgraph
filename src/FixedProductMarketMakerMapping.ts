@@ -9,7 +9,9 @@ import {
   Condition,
   UserTourPlayerPnLTransaction,
   UserPnL,
-} from "../generated/schema";
+  Player,
+  TradePrice
+} from '../generated/schema';
 import {
   FPMMFundingAdded,
   FPMMFundingRemoved,
@@ -17,8 +19,9 @@ import {
   FPMMSell,
   Transfer,
   FPMMCreated,
+  LongShortCurrentPrice
 } from "../generated/templates/FixedProductMarketMaker/FixedProductMarketMaker";
-import { nthRoot } from "./utils/nth-root";
+import { nthRoot } from './utils/nth-root';
 import {
   updateVolumes,
   updateLiquidityFields,
@@ -500,4 +503,39 @@ export function handleFPMMCreated(event: FPMMCreated): void {
   // Entities can be written to the store with `.save()`
   log.info("About to save FPMM", []);
   entity.save();
+}
+
+export function handleCurrentPrice(event: LongShortCurrentPrice): void {
+  let data = event.params.timestamp.toString();
+  log.info('$$$$$$$$$$$$$$$$$$handleCurrentPrice$$$$$$$$$$$$$$ {}', [data]);
+
+  let fpmmAddress = event.address.toHexString();
+  let fpmm = FixedProductMarketMaker.load(fpmmAddress);
+  if (fpmm == null) {
+    log.error('cannot update current price: FixedProductMarketMaker instance for {} not found', [
+      fpmmAddress,
+    ]);
+    return;
+  }
+
+  let playerAddress = event.address.toHexString() + event.params.questionId.toHexString();
+  let player = Player.load(playerAddress);
+  if (player == null) {
+    log.info('Creating new player', []);
+    player = new Player(playerAddress);
+  }
+  player.currentLongTokenPrice = event.params.currentlongprice;
+  player.currentShortTokenPrice = event.params.currentshortprice;
+  player.timestamp = event.params.timestamp;
+  player.longTokenPricePast24Hour = event.params.currentlongprice;
+  player.shortTokenPricePast24Hour = event.params.currentlongprice;
+  player.save();
+
+  let tradePrice = new TradePrice(event.params.timestamp.toString());
+  tradePrice.currentLongTokenPrice = event.params.currentlongprice;
+  tradePrice.currentShortTokenPrice = event.params.currentshortprice;
+  tradePrice.timestamp = event.params.timestamp;
+  tradePrice.questionId = event.params.questionId;
+  tradePrice.fpmm = event.address.toHexString();
+  tradePrice.save();
 }
