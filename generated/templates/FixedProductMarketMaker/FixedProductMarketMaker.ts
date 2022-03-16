@@ -210,40 +210,6 @@ export class FPMMSell__Params {
   }
 }
 
-export class LongShortCurrentPrice extends ethereum.Event {
-  get params(): LongShortCurrentPrice__Params {
-    return new LongShortCurrentPrice__Params(this);
-  }
-}
-
-export class LongShortCurrentPrice__Params {
-  _event: LongShortCurrentPrice;
-
-  constructor(event: LongShortCurrentPrice) {
-    this._event = event;
-  }
-
-  get currentlongprice(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get currentshortprice(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get timestamp(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-
-  get questionId(): Bytes {
-    return this._event.parameters[3].value.toBytes();
-  }
-
-  get fpmm(): Address {
-    return this._event.parameters[4].value.toAddress();
-  }
-}
-
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -289,6 +255,40 @@ export class TransferredOwner__Params {
 
   get previousOwner(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class LongShortCurrentPrice extends ethereum.Event {
+  get params(): LongShortCurrentPrice__Params {
+    return new LongShortCurrentPrice__Params(this);
+  }
+}
+
+export class LongShortCurrentPrice__Params {
+  _event: LongShortCurrentPrice;
+
+  constructor(event: LongShortCurrentPrice) {
+    this._event = event;
+  }
+
+  get currentlongprice(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get currentshortprice(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get questionId(): Bytes {
+    return this._event.parameters[3].value.toBytes();
+  }
+
+  get fpmm(): Address {
+    return this._event.parameters[4].value.toAddress();
   }
 }
 
@@ -553,29 +553,6 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
       "getBalancesFor",
       "getBalancesFor(address):(uint256[])",
       [ethereum.Value.fromAddress(target)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
-  }
-
-  getCollectionId(): Array<BigInt> {
-    let result = super.call(
-      "getCollectionId",
-      "getCollectionId():(uint256[])",
-      []
-    );
-
-    return result[0].toBigIntArray();
-  }
-
-  try_getCollectionId(): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall(
-      "getCollectionId",
-      "getCollectionId():(uint256[])",
-      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();

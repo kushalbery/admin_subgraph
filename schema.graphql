@@ -337,23 +337,15 @@ type UserTourPlayerPnLTransaction @entity {
   id: ID!
   userId: String!
   questionId: String!
+  fpmmId: String!
+  outcomeIndex: BigInt!
   "net investment amount of user"
   investmentAmount: BigInt!
   "net tokens remaining with user for corresponding questionId & outcomeIndex"
   tokens: BigInt!
   userPnl: UserPnL!
+  playerTokenPrice: Player!
 }
-
-# type UserPlayerPnLTransaction @entity {
-#   "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
-#   id: ID!
-#   userId: String!
-#   questionId: String!
-#   "net investment amount of user"
-#   investmentAmount: BigInt!
-#   "net tokens remaining with user for corresponding questionId & outcomeIndex"
-#   tokens: BigInt!
-# }
 
 type Player @entity {
   id: ID!
