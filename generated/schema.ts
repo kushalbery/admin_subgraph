@@ -2124,6 +2124,15 @@ export class Player extends Entity {
   set shortTokenPricePast24Hour(value: BigInt) {
     this.set("shortTokenPricePast24Hour", Value.fromBigInt(value));
   }
+
+  get trade(): Array<string> {
+    let value = this.get("trade");
+    return value!.toStringArray();
+  }
+
+  set trade(value: Array<string>) {
+    this.set("trade", Value.fromStringArray(value));
+  }
 }
 
 export class TradePrice extends Entity {
@@ -2136,6 +2145,7 @@ export class TradePrice extends Entity {
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("questionId", Value.fromBytes(Bytes.empty()));
     this.set("fpmm", Value.fromString(""));
+    this.set("player", Value.fromString(""));
   }
 
   save(): void {
@@ -2207,5 +2217,14 @@ export class TradePrice extends Entity {
 
   set fpmm(value: string) {
     this.set("fpmm", Value.fromString(value));
+  }
+
+  get player(): string {
+    let value = this.get("player");
+    return value!.toString();
+  }
+
+  set player(value: string) {
+    this.set("player", Value.fromString(value));
   }
 }

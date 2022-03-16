@@ -518,7 +518,7 @@ export function handleCurrentPrice(event: LongShortCurrentPrice): void {
     return;
   }
 
-  let playerAddress = event.address.toHexString() + event.params.questionId.toHexString();
+  let playerAddress = event.address.toHexString();
   let player = Player.load(playerAddress);
   if (player == null) {
     log.info('Creating new player', []);
@@ -537,5 +537,6 @@ export function handleCurrentPrice(event: LongShortCurrentPrice): void {
   tradePrice.timestamp = event.params.timestamp;
   tradePrice.questionId = event.params.questionId;
   tradePrice.fpmm = event.address.toHexString();
+  tradePrice.player = event.address.toHexString();
   tradePrice.save();
 }

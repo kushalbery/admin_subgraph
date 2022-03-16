@@ -561,29 +561,6 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
-  getCollectionId(): Array<BigInt> {
-    let result = super.call(
-      "getCollectionId",
-      "getCollectionId():(uint256[])",
-      []
-    );
-
-    return result[0].toBigIntArray();
-  }
-
-  try_getCollectionId(): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall(
-      "getCollectionId",
-      "getCollectionId():(uint256[])",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
-  }
-
   getFee(): BigInt {
     let result = super.call("getFee", "getFee():(uint256)", []);
 

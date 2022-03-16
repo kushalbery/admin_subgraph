@@ -344,17 +344,6 @@ type UserTourPlayerPnLTransaction @entity {
   userPnl: UserPnL!
 }
 
-# type UserPlayerPnLTransaction @entity {
-#   "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
-#   id: ID!
-#   userId: String!
-#   questionId: String!
-#   "net investment amount of user"
-#   investmentAmount: BigInt!
-#   "net tokens remaining with user for corresponding questionId & outcomeIndex"
-#   tokens: BigInt!
-# }
-
 type Player @entity {
   id: ID!
   currentLongTokenPrice: BigInt!
@@ -362,6 +351,7 @@ type Player @entity {
   timestamp: BigInt!
   longTokenPricePast24Hour: BigInt!
   shortTokenPricePast24Hour: BigInt!
+  trade: [TradePrice!]! @derivedFrom(field: "player")
 }
 
 type TradePrice @entity {
@@ -371,4 +361,5 @@ type TradePrice @entity {
   timestamp: BigInt!
   questionId: Bytes!
   fpmm: FixedProductMarketMaker!
+  player: Player!
 }
