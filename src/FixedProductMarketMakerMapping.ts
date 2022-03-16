@@ -49,6 +49,8 @@ import {
 
 function updateUserPlayerPnLTransaction(
   id: string,
+  questionId: string,
+  userId: string,
   tradeAmount: BigInt,
   tokensTraded: BigInt,
   txnType: string
@@ -56,12 +58,17 @@ function updateUserPlayerPnLTransaction(
   let userPlayerPnLTransaction = UserPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
     let newPnLTourTxn = new UserPlayerPnLTransaction(id);
+    newPnLTourTxn.questionId = questionId;
+    newPnLTourTxn.userId = userId;
     newPnLTourTxn.investmentAmount = tradeAmount;
     newPnLTourTxn.tokens = tokensTraded;
     newPnLTourTxn.save();
     return;
   }
   if (txnType === "Buy") {
+    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.plus(
+      tokensTraded
+    );
     userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.plus(
       tradeAmount
     );
@@ -306,11 +313,15 @@ export function handleBuy(event: FPMMBuy): void {
   );
   recordBuy(event);
   let pnlId = event.params.buyer
-    .toString()
+    .toHexString()
+    .concat("-")
     .concat(event.address.toHexString())
+    .concat("-")
     .concat(event.params.outcomeIndex.toString());
   updateUserPlayerPnLTransaction(
     pnlId,
+    event.params.questionId.toHexString(),
+    event.params.buyer.toHexString(),
     event.params.investmentAmount,
     event.params.outcomeTokensBought,
     "Buy"
@@ -394,11 +405,15 @@ export function handleSell(event: FPMMSell): void {
   );
   recordSell(event);
   let pnlId = event.params.seller
-    .toString()
-    .concat(event.address.toHexString()) // fpmmId
+    .toHexString()
+    .concat("-")
+    .concat(event.address.toHexString())
+    .concat("-")
     .concat(event.params.outcomeIndex.toString());
   updateUserPlayerPnLTransaction(
     pnlId,
+    event.params.questionId.toHexString(),
+    event.params.seller.toHexString(),
     event.params.returnAmount,
     event.params.outcomeTokensSold,
     "Sell"

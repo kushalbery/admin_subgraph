@@ -236,6 +236,28 @@ export class Transfer__Params {
   }
 }
 
+export class TransferredOwner extends ethereum.Event {
+  get params(): TransferredOwner__Params {
+    return new TransferredOwner__Params(this);
+  }
+}
+
+export class TransferredOwner__Params {
+  _event: TransferredOwner;
+
+  constructor(event: TransferredOwner) {
+    this._event = event;
+  }
+
+  get owner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class FixedProductMarketMaker extends ethereum.SmartContract {
   static bind(address: Address): FixedProductMarketMaker {
     return new FixedProductMarketMaker("FixedProductMarketMaker", address);
@@ -482,6 +504,52 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
+  getBalancesFor(target: Address): Array<BigInt> {
+    let result = super.call(
+      "getBalancesFor",
+      "getBalancesFor(address):(uint256[])",
+      [ethereum.Value.fromAddress(target)]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getBalancesFor(target: Address): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getBalancesFor",
+      "getBalancesFor(address):(uint256[])",
+      [ethereum.Value.fromAddress(target)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
+  getCollectionId(): Array<BigInt> {
+    let result = super.call(
+      "getCollectionId",
+      "getCollectionId():(uint256[])",
+      []
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getCollectionId(): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getCollectionId",
+      "getCollectionId():(uint256[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
   getFee(): BigInt {
     let result = super.call("getFee", "getFee():(uint256)", []);
 
@@ -495,6 +563,21 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOwner(): Address {
+    let result = super.call("getOwner", "getOwner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_getOwner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("getOwner", "getOwner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   getPoolBalances(): Array<BigInt> {
@@ -771,21 +854,18 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  transfer(recipient: Address, amount: BigInt): boolean {
+  transfer(to: Address, amount: BigInt): boolean {
     let result = super.call("transfer", "transfer(address,uint256):(bool)", [
-      ethereum.Value.fromAddress(recipient),
+      ethereum.Value.fromAddress(to),
       ethereum.Value.fromUnsignedBigInt(amount)
     ]);
 
     return result[0].toBoolean();
   }
 
-  try_transfer(
-    recipient: Address,
-    amount: BigInt
-  ): ethereum.CallResult<boolean> {
+  try_transfer(to: Address, amount: BigInt): ethereum.CallResult<boolean> {
     let result = super.tryCall("transfer", "transfer(address,uint256):(bool)", [
-      ethereum.Value.fromAddress(recipient),
+      ethereum.Value.fromAddress(to),
       ethereum.Value.fromUnsignedBigInt(amount)
     ]);
     if (result.reverted) {
@@ -795,13 +875,13 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  transferFrom(sender: Address, recipient: Address, amount: BigInt): boolean {
+  transferFrom(from: Address, to: Address, amount: BigInt): boolean {
     let result = super.call(
       "transferFrom",
       "transferFrom(address,address,uint256):(bool)",
       [
-        ethereum.Value.fromAddress(sender),
-        ethereum.Value.fromAddress(recipient),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromAddress(to),
         ethereum.Value.fromUnsignedBigInt(amount)
       ]
     );
@@ -810,16 +890,16 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
   }
 
   try_transferFrom(
-    sender: Address,
-    recipient: Address,
+    from: Address,
+    to: Address,
     amount: BigInt
   ): ethereum.CallResult<boolean> {
     let result = super.tryCall(
       "transferFrom",
       "transferFrom(address,address,uint256):(bool)",
       [
-        ethereum.Value.fromAddress(sender),
-        ethereum.Value.fromAddress(recipient),
+        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromAddress(to),
         ethereum.Value.fromUnsignedBigInt(amount)
       ]
     );
@@ -864,12 +944,16 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[3].value.toAddress();
   }
 
-  get _conditionId(): Bytes {
+  get _questionId(): Bytes {
     return this._call.inputValues[4].value.toBytes();
   }
 
+  get _oracle(): Address {
+    return this._call.inputValues[5].value.toAddress();
+  }
+
   get _fee(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
+    return this._call.inputValues[6].value.toBigInt();
   }
 }
 
@@ -1282,7 +1366,7 @@ export class TransferCall__Inputs {
     this._call = call;
   }
 
-  get recipient(): Address {
+  get to(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
@@ -1320,11 +1404,11 @@ export class TransferFromCall__Inputs {
     this._call = call;
   }
 
-  get sender(): Address {
+  get from(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get recipient(): Address {
+  get to(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
 
@@ -1342,6 +1426,36 @@ export class TransferFromCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class TransferOwnerCall extends ethereum.Call {
+  get inputs(): TransferOwnerCall__Inputs {
+    return new TransferOwnerCall__Inputs(this);
+  }
+
+  get outputs(): TransferOwnerCall__Outputs {
+    return new TransferOwnerCall__Outputs(this);
+  }
+}
+
+export class TransferOwnerCall__Inputs {
+  _call: TransferOwnerCall;
+
+  constructor(call: TransferOwnerCall) {
+    this._call = call;
+  }
+
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class TransferOwnerCall__Outputs {
+  _call: TransferOwnerCall;
+
+  constructor(call: TransferOwnerCall) {
+    this._call = call;
   }
 }
 
