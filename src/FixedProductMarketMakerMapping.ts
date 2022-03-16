@@ -1,4 +1,4 @@
-import { BigInt, log } from '@graphprotocol/graph-ts';
+import { BigInt, log } from "@graphprotocol/graph-ts";
 
 import {
   FixedProductMarketMaker,
@@ -6,45 +6,92 @@ import {
   FpmmFundingRemoval,
   Transaction,
   CreatedFPMM,
-  Condition
-} from '../generated/schema';
+  Condition,
+  UserTourPlayerPnLTransaction,
+  UserPnL,
+} from "../generated/schema";
 import {
   FPMMFundingAdded,
   FPMMFundingRemoved,
   FPMMBuy,
   FPMMSell,
   Transfer,
-  FPMMCreated
-} from '../generated/templates/FixedProductMarketMaker/FixedProductMarketMaker';
-import { nthRoot } from './utils/nth-root';
+  FPMMCreated,
+} from "../generated/templates/FixedProductMarketMaker/FixedProductMarketMaker";
+import { nthRoot } from "./utils/nth-root";
 import {
   updateVolumes,
   updateLiquidityFields,
   updateFeeFields,
   calculatePrices,
   loadPoolMembership,
-} from './utils/fpmm-utils';
+} from "./utils/fpmm-utils";
 import {
   updateMarketPositionFromLiquidityAdded,
   updateMarketPositionFromLiquidityRemoved,
   updateMarketPositionFromTrade,
-} from './utils/market-positions-utils';
+} from "./utils/market-positions-utils";
 import {
   AddressZero,
   bigOne,
   bigZero,
   TRADE_TYPE_BUY,
   TRADE_TYPE_SELL,
-} from './utils/constants';
-import { getCollateralScale } from './utils/collateralTokens';
-import { updateGlobalVolume } from './utils/global-utils';
-import { increment, max } from './utils/maths';
+} from "./utils/constants";
+import { getCollateralScale } from "./utils/collateralTokens";
+import { updateGlobalVolume } from "./utils/global-utils";
+import { increment, max } from "./utils/maths";
 import {
   incrementAccountTrades,
   markAccountAsSeen,
   requireAccount,
   updateUserVolume,
-} from './utils/account-utils';
+} from "./utils/account-utils";
+
+function updateUserPlayerPnLTransaction(
+  id: string,
+  questionId: string,
+  userId: string,
+  tradeAmount: BigInt,
+  tokensTraded: BigInt,
+  txnType: string
+): void {
+  let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
+  if (userPlayerPnLTransaction == null) {
+    let userPnlObj = new UserPnL(userId);
+    userPnlObj.questionId = questionId;
+
+    let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
+    newPnLTourTxn.questionId = questionId;
+    newPnLTourTxn.userId = userId;
+    newPnLTourTxn.investmentAmount = tradeAmount;
+    newPnLTourTxn.tokens = tokensTraded;
+    newPnLTourTxn.userPnl = userId;
+    newPnLTourTxn.save();
+    userPnlObj.save();
+    return;
+  }
+  if (txnType === "Buy") {
+    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.plus(
+      tokensTraded
+    );
+    userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.plus(
+      tradeAmount
+    );
+    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.plus(
+      tokensTraded
+    );
+    userPlayerPnLTransaction.save();
+    return;
+  }
+  userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
+    tradeAmount
+  );
+  userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.minus(
+    tokensTraded
+  );
+  userPlayerPnLTransaction.save();
+}
 
 function recordBuy(event: FPMMBuy): void {
   let buy = new Transaction(event.transaction.hash.toHexString());
@@ -74,7 +121,7 @@ function recordSell(event: FPMMSell): void {
 
 function recordFundingAddition(event: FPMMFundingAdded): void {
   let fpmmFundingAdded = new FpmmFundingAddition(
-    event.transaction.hash.toHexString(),
+    event.transaction.hash.toHexString()
   );
   fpmmFundingAdded.timestamp = event.block.timestamp;
   fpmmFundingAdded.fpmm = event.address.toHexString();
@@ -96,7 +143,7 @@ function recordFundingAddition(event: FPMMFundingAdded): void {
     // Event emits the number of outcome tokens added to the market maker
     // Subtract this from the amount of collateral added to get the amount refunded to funder
     amountsRefunded[outcomeIndex] = addedFunds.minus(
-      amountsAdded[outcomeIndex],
+      amountsAdded[outcomeIndex]
     );
   }
   fpmmFundingAdded.amountsRefunded = amountsRefunded;
@@ -106,7 +153,7 @@ function recordFundingAddition(event: FPMMFundingAdded): void {
 
 function recordFundingRemoval(event: FPMMFundingRemoved): void {
   let fpmmFundingRemoved = new FpmmFundingRemoval(
-    event.transaction.hash.toHexString(),
+    event.transaction.hash.toHexString()
   );
   fpmmFundingRemoved.timestamp = event.block.timestamp;
   fpmmFundingRemoved.fpmm = event.address.toHexString();
@@ -123,8 +170,8 @@ export function handleFundingAdded(event: FPMMFundingAdded): void {
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
     log.error(
-      'cannot add funding: FixedProductMarketMaker instance for {} not found',
-      [fpmmAddress],
+      "cannot add funding: FixedProductMarketMaker instance for {} not found",
+      [fpmmAddress]
     );
     return;
   }
@@ -143,7 +190,7 @@ export function handleFundingAdded(event: FPMMFundingAdded): void {
   updateLiquidityFields(
     fpmm as FixedProductMarketMaker,
     liquidityParameter,
-    collateralScale.toBigDecimal(),
+    collateralScale.toBigDecimal()
   );
 
   fpmm.totalSupply = fpmm.totalSupply.plus(event.params.sharesMinted);
@@ -165,8 +212,8 @@ export function handleFundingRemoved(event: FPMMFundingRemoved): void {
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
     log.error(
-      'cannot remove funding: FixedProductMarketMaker instance for {} not found',
-      [fpmmAddress],
+      "cannot remove funding: FixedProductMarketMaker instance for {} not found",
+      [fpmmAddress]
     );
     return;
   }
@@ -186,7 +233,7 @@ export function handleFundingRemoved(event: FPMMFundingRemoved): void {
   updateLiquidityFields(
     fpmm as FixedProductMarketMaker,
     liquidityParameter,
-    collateralScale.toBigDecimal(),
+    collateralScale.toBigDecimal()
   );
 
   fpmm.totalSupply = fpmm.totalSupply.minus(event.params.sharesBurnt);
@@ -206,7 +253,7 @@ export function handleBuy(event: FPMMBuy): void {
   let fpmmAddress = event.address.toHexString();
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
-    log.error('cannot buy: FixedProductMarketMaker instance for {} not found', [
+    log.error("cannot buy: FixedProductMarketMaker instance for {} not found", [
       fpmmAddress,
     ]);
     return;
@@ -214,7 +261,7 @@ export function handleBuy(event: FPMMBuy): void {
 
   let oldAmounts = fpmm.outcomeTokenAmounts;
   let investmentAmountMinusFees = event.params.investmentAmount.minus(
-    event.params.feeAmount,
+    event.params.feeAmount
   );
 
   let outcomeIndex = event.params.outcomeIndex.toI32();
@@ -239,7 +286,7 @@ export function handleBuy(event: FPMMBuy): void {
   updateLiquidityFields(
     fpmm as FixedProductMarketMaker,
     liquidityParameter,
-    collateralScaleDec,
+    collateralScaleDec
   );
 
   updateVolumes(
@@ -247,12 +294,12 @@ export function handleBuy(event: FPMMBuy): void {
     event.block.timestamp,
     event.params.investmentAmount,
     collateralScaleDec,
-    TRADE_TYPE_BUY,
+    TRADE_TYPE_BUY
   );
   updateFeeFields(
     fpmm as FixedProductMarketMaker,
     event.params.feeAmount,
-    collateralScaleDec,
+    collateralScaleDec
   );
 
   fpmm.tradesQuantity = increment(fpmm.tradesQuantity);
@@ -263,19 +310,33 @@ export function handleBuy(event: FPMMBuy): void {
     event.params.buyer.toHexString(),
     event.params.investmentAmount,
     collateralScaleDec,
-    event.block.timestamp,
+    event.block.timestamp
   );
   markAccountAsSeen(event.params.buyer.toHexString(), event.block.timestamp);
   incrementAccountTrades(
     event.params.buyer.toHexString(),
-    event.block.timestamp,
+    event.block.timestamp
   );
   recordBuy(event);
+  let pnlId = event.params.buyer
+    .toHexString()
+    .concat("-")
+    .concat(event.address.toHexString())
+    .concat("-")
+    .concat(event.params.outcomeIndex.toString());
+  updateUserPlayerPnLTransaction(
+    pnlId,
+    event.params.questionId.toHexString(),
+    event.params.buyer.toHexString(),
+    event.params.investmentAmount,
+    event.params.outcomeTokensBought,
+    "Buy"
+  );
   updateGlobalVolume(
     event.params.investmentAmount,
     event.params.feeAmount,
     collateralScaleDec,
-    TRADE_TYPE_BUY,
+    TRADE_TYPE_BUY
   );
   updateMarketPositionFromTrade(event);
 }
@@ -285,15 +346,15 @@ export function handleSell(event: FPMMSell): void {
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
     log.error(
-      'cannot sell: FixedProductMarketMaker instance for {} not found',
-      [fpmmAddress],
+      "cannot sell: FixedProductMarketMaker instance for {} not found",
+      [fpmmAddress]
     );
     return;
   }
 
   let oldAmounts = fpmm.outcomeTokenAmounts;
   let returnAmountPlusFees = event.params.returnAmount.plus(
-    event.params.feeAmount,
+    event.params.feeAmount
   );
 
   let outcomeIndex = event.params.outcomeIndex.toI32();
@@ -317,7 +378,7 @@ export function handleSell(event: FPMMSell): void {
   updateLiquidityFields(
     fpmm as FixedProductMarketMaker,
     liquidityParameter,
-    collateralScaleDec,
+    collateralScaleDec
   );
 
   updateVolumes(
@@ -325,12 +386,12 @@ export function handleSell(event: FPMMSell): void {
     event.block.timestamp,
     event.params.returnAmount,
     collateralScaleDec,
-    TRADE_TYPE_SELL,
+    TRADE_TYPE_SELL
   );
   updateFeeFields(
     fpmm as FixedProductMarketMaker,
     event.params.feeAmount,
-    collateralScaleDec,
+    collateralScaleDec
   );
 
   fpmm.tradesQuantity = increment(fpmm.tradesQuantity);
@@ -341,19 +402,33 @@ export function handleSell(event: FPMMSell): void {
     event.params.seller.toHexString(),
     event.params.returnAmount,
     collateralScaleDec,
-    event.block.timestamp,
+    event.block.timestamp
   );
   markAccountAsSeen(event.params.seller.toHexString(), event.block.timestamp);
   incrementAccountTrades(
     event.params.seller.toHexString(),
-    event.block.timestamp,
+    event.block.timestamp
   );
   recordSell(event);
+  let pnlId = event.params.seller
+    .toHexString()
+    .concat("-")
+    .concat(event.address.toHexString())
+    .concat("-")
+    .concat(event.params.outcomeIndex.toString());
+  updateUserPlayerPnLTransaction(
+    pnlId,
+    event.params.questionId.toHexString(),
+    event.params.seller.toHexString(),
+    event.params.returnAmount,
+    event.params.outcomeTokensSold,
+    "Sell"
+  );
   updateGlobalVolume(
     event.params.returnAmount,
     event.params.feeAmount,
     collateralScaleDec,
-    TRADE_TYPE_SELL,
+    TRADE_TYPE_SELL
   );
   updateMarketPositionFromTrade(event);
 }
@@ -381,46 +456,48 @@ export function handlePoolShareTransfer(event: Transfer): void {
 }
 
 export function handleFPMMCreated(event: FPMMCreated): void {
-  log.info('Reached FPMM', []);
+  log.info("Reached FPMM", []);
   let address = event.address;
   let addressHexString = address.toHexString();
-  let entity = CreatedFPMM.load(address.toHex())
-  log.info('$$$$$$$$$$$$$$$$$$addressHexString$$$$$$$$$$$$$$ {}', [addressHexString]);
+  let entity = CreatedFPMM.load(address.toHex());
+  log.info("$$$$$$$$$$$$$$$$$$addressHexString$$$$$$$$$$$$$$ {}", [
+    addressHexString,
+  ]);
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
-  log.info('checking if statement FPMM', []);
+  log.info("checking if statement FPMM", []);
   if (!entity) {
-    entity = new CreatedFPMM(event.address.toHex())
-    log.info('Inside if condition FPMM', []);
+    entity = new CreatedFPMM(event.address.toHex());
+    log.info("Inside if condition FPMM", []);
   }
 
   let conditionIds = event.params.conditionIds;
   let outcomeTokenCount = 1;
 
-    let conditionIdStr = conditionIds.toHexString();
+  let conditionIdStr = conditionIds.toHexString();
 
-    let condition = Condition.load(conditionIdStr);
-    if (condition == null) {
-      log.error('failed to create market maker {}: condition {} not prepared', [
-        addressHexString,
-        conditionIdStr,
-      ]);
-      return;
-    }
+  let condition = Condition.load(conditionIdStr);
+  if (condition == null) {
+    log.error("failed to create market maker {}: condition {} not prepared", [
+      addressHexString,
+      conditionIdStr,
+    ]);
+    return;
+  }
 
-    outcomeTokenCount *= condition.outcomeSlotCount;
-    condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
-      [addressHexString],
-    );
-    condition.save();
+  outcomeTokenCount *= condition.outcomeSlotCount;
+  condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
+    [addressHexString]
+  );
+  condition.save();
 
   // Entity fields can be set based on event parameters
-  entity.creator = event.params.creator
-  entity.tokenName = event.params.tokenName
-  entity.tokenSymbol = event.params.tokenSymbol
+  entity.creator = event.params.creator;
+  entity.tokenName = event.params.tokenName;
+  entity.tokenSymbol = event.params.tokenSymbol;
 
   // Entities can be written to the store with `.save()`
-  log.info('About to save FPMM', []);
-  entity.save()
+  log.info("About to save FPMM", []);
+  entity.save();
 }
