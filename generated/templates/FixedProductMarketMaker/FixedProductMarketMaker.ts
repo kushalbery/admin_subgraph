@@ -68,6 +68,10 @@ export class FPMMBuy__Params {
   get outcomeTokensBought(): BigInt {
     return this._event.parameters[4].value.toBigInt();
   }
+
+  get questionId(): Bytes {
+    return this._event.parameters[5].value.toBytes();
+  }
 }
 
 export class FPMMCreated extends ethereum.Event {
@@ -199,6 +203,10 @@ export class FPMMSell__Params {
 
   get outcomeTokensSold(): BigInt {
     return this._event.parameters[4].value.toBigInt();
+  }
+
+  get questionId(): Bytes {
+    return this._event.parameters[5].value.toBytes();
   }
 }
 
