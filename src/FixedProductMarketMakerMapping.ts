@@ -65,6 +65,7 @@ function updateUserPlayerPnLTransaction(
   if (userPlayerPnLTransaction == null) {
     let userPnlObj = new UserPnL(userId);
     userPnlObj.questionId = questionId;
+    userPnlObj.save();
 
     let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
     newPnLTourTxn.questionId = questionId;
@@ -76,7 +77,7 @@ function updateUserPlayerPnLTransaction(
     newPnLTourTxn.outcomeIndex = outcomeIndex;
     newPnLTourTxn.playerTokenPrice = fpmmId + questionId;
     newPnLTourTxn.save();
-    userPnlObj.save();
+
     return;
   }
   if (txnType === "Buy") {

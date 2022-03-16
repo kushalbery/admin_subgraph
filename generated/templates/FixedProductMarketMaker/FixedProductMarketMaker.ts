@@ -210,6 +210,40 @@ export class FPMMSell__Params {
   }
 }
 
+export class LongShortCurrentPrice extends ethereum.Event {
+  get params(): LongShortCurrentPrice__Params {
+    return new LongShortCurrentPrice__Params(this);
+  }
+}
+
+export class LongShortCurrentPrice__Params {
+  _event: LongShortCurrentPrice;
+
+  constructor(event: LongShortCurrentPrice) {
+    this._event = event;
+  }
+
+  get currentlongprice(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get currentshortprice(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get questionId(): Bytes {
+    return this._event.parameters[3].value.toBytes();
+  }
+
+  get fpmm(): Address {
+    return this._event.parameters[4].value.toAddress();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -255,40 +289,6 @@ export class TransferredOwner__Params {
 
   get previousOwner(): Address {
     return this._event.parameters[1].value.toAddress();
-  }
-}
-
-export class LongShortCurrentPrice extends ethereum.Event {
-  get params(): LongShortCurrentPrice__Params {
-    return new LongShortCurrentPrice__Params(this);
-  }
-}
-
-export class LongShortCurrentPrice__Params {
-  _event: LongShortCurrentPrice;
-
-  constructor(event: LongShortCurrentPrice) {
-    this._event = event;
-  }
-
-  get currentlongprice(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get currentshortprice(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get timestamp(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-
-  get questionId(): Bytes {
-    return this._event.parameters[3].value.toBytes();
-  }
-
-  get fpmm(): Address {
-    return this._event.parameters[4].value.toAddress();
   }
 }
 
