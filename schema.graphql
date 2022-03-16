@@ -354,3 +354,21 @@ type UserTourPlayerPnLTransaction @entity {
 #   "net tokens remaining with user for corresponding questionId & outcomeIndex"
 #   tokens: BigInt!
 # }
+
+type Player @entity {
+  id: ID!
+  currentLongTokenPrice: BigInt!
+  currentShortTokenPrice: BigInt!
+  timestamp: BigInt!
+  longTokenPricePast24Hour: BigInt!
+  shortTokenPricePast24Hour: BigInt!
+}
+
+type TradePrice @entity {
+  id: ID!
+  currentLongTokenPrice: BigInt!
+  currentShortTokenPrice: BigInt!
+  timestamp: BigInt!
+  questionId: Bytes!
+  fpmm: FixedProductMarketMaker!
+}
