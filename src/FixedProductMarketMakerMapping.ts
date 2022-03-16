@@ -63,7 +63,8 @@ function updateUserPlayerPnLTransaction(
 ): void {
   let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
-    let userPnlObj = new UserPnL(userId);
+    let userPnlObj = new UserPnL(userId + "-" + fpmmId);
+    userPnlObj.userId = userId;
     userPnlObj.questionId = questionId;
     userPnlObj.save();
 
@@ -72,7 +73,7 @@ function updateUserPlayerPnLTransaction(
     newPnLTourTxn.userId = userId;
     newPnLTourTxn.investmentAmount = tradeAmount;
     newPnLTourTxn.tokens = tokensTraded;
-    newPnLTourTxn.userPnl = userId;
+    newPnLTourTxn.userPnl = userId + "-" + fpmmId;
     newPnLTourTxn.fpmmId = fpmmId;
     newPnLTourTxn.outcomeIndex = outcomeIndex;
     newPnLTourTxn.playerTokenPrice = fpmmId + questionId;

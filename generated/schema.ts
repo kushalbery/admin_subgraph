@@ -1905,6 +1905,7 @@ export class UserPnL extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("userId", Value.fromString(""));
     this.set("questionId", Value.fromString(""));
   }
 
@@ -1934,6 +1935,15 @@ export class UserPnL extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get userId(): string {
+    let value = this.get("userId");
+    return value!.toString();
+  }
+
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
+  }
+
   get questionId(): string {
     let value = this.get("questionId");
     return value!.toString();
@@ -1943,13 +1953,21 @@ export class UserPnL extends Entity {
     this.set("questionId", Value.fromString(value));
   }
 
-  get tours(): Array<string> {
+  get tours(): Array<string> | null {
     let value = this.get("tours");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set tours(value: Array<string>) {
-    this.set("tours", Value.fromStringArray(value));
+  set tours(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tours");
+    } else {
+      this.set("tours", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 
