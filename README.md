@@ -68,7 +68,7 @@ chmod +x ./start.sh
 ## Query
 
 - Players
-  - ````graphQl
+  - ```graphQl
     {
       players(first: 1000) {
         id
@@ -89,7 +89,9 @@ chmod +x ./start.sh
     }
     ```
     Replace timestamp_lt value
-    ````
+    ```
+
+    ```
 
 ## Debug
 
