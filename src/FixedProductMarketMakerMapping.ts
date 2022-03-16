@@ -7,8 +7,7 @@ import {
   Transaction,
   CreatedFPMM,
   Condition,
-  UserPnLTransaction,
-  UserPnLTourTransaction,
+  UserPlayerPnLTransaction,
 } from "../generated/schema";
 import {
   FPMMFundingAdded,
@@ -48,62 +47,37 @@ import {
   updateUserVolume,
 } from "./utils/account-utils";
 
-function updatePnLTransaction(
+function updateUserPlayerPnLTransaction(
   id: string,
   tradeAmount: BigInt,
   tokensTraded: BigInt,
   txnType: string
 ): void {
-  let userPnLTransaction = UserPnLTransaction.load(id);
-  if (userPnLTransaction == null) {
-    let newPnLTxn = new UserPnLTransaction(id);
-    newPnLTxn.investmentAmount = tradeAmount;
-    newPnLTxn.tokens = tokensTraded;
-    newPnLTxn.save();
-    return;
-  }
-  if (txnType === "Buy") {
-    userPnLTransaction.investmentAmount =
-      userPnLTransaction.investmentAmount.plus(tradeAmount);
-    userPnLTransaction.tokens =
-      userPnLTransaction.investmentAmount.plus(tokensTraded);
-    userPnLTransaction.save();
-    return;
-  }
-  userPnLTransaction.investmentAmount =
-    userPnLTransaction.investmentAmount.minus(tradeAmount);
-  userPnLTransaction.tokens =
-    userPnLTransaction.investmentAmount.minus(tokensTraded);
-  userPnLTransaction.save();
-}
-
-function updatePnLTourTransaction(
-  id: string,
-  tradeAmount: BigInt,
-  tokensTraded: BigInt,
-  txnType: string
-): void {
-  let userPnLTourTransaction = UserPnLTourTransaction.load(id);
-  if (userPnLTourTransaction == null) {
-    let newPnLTourTxn = new UserPnLTourTransaction(id);
+  let userPlayerPnLTransaction = UserPlayerPnLTransaction.load(id);
+  if (userPlayerPnLTransaction == null) {
+    let newPnLTourTxn = new UserPlayerPnLTransaction(id);
     newPnLTourTxn.investmentAmount = tradeAmount;
     newPnLTourTxn.tokens = tokensTraded;
     newPnLTourTxn.save();
     return;
   }
   if (txnType === "Buy") {
-    userPnLTourTransaction.investmentAmount =
-      userPnLTourTransaction.investmentAmount.plus(tradeAmount);
-    userPnLTourTransaction.tokens =
-      userPnLTourTransaction.investmentAmount.plus(tokensTraded);
-    userPnLTourTransaction.save();
+    userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.plus(
+      tradeAmount
+    );
+    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.plus(
+      tokensTraded
+    );
+    userPlayerPnLTransaction.save();
     return;
   }
-  userPnLTourTransaction.investmentAmount =
-    userPnLTourTransaction.investmentAmount.minus(tradeAmount);
-  userPnLTourTransaction.tokens =
-    userPnLTourTransaction.investmentAmount.minus(tokensTraded);
-  userPnLTourTransaction.save();
+  userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
+    tradeAmount
+  );
+  userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.investmentAmount.minus(
+    tokensTraded
+  );
+  userPlayerPnLTransaction.save();
 }
 
 function recordBuy(event: FPMMBuy): void {
@@ -333,20 +307,10 @@ export function handleBuy(event: FPMMBuy): void {
   recordBuy(event);
   let pnlId = event.params.buyer
     .toString()
-    .concat(event.params.questionId.toString())
+    .concat(event.address.toHexString())
     .concat(event.params.outcomeIndex.toString());
-  updatePnLTransaction(
+  updateUserPlayerPnLTransaction(
     pnlId,
-    event.params.investmentAmount,
-    event.params.outcomeTokensBought,
-    "Buy"
-  );
-  let pnlTourId = event.params.buyer
-    .toString()
-    .concat(event.params.fpmmId.toString())
-    .concat(event.params.outcomeIndex.toString());
-  updatePnLTourTransaction(
-    pnlTourId,
     event.params.investmentAmount,
     event.params.outcomeTokensBought,
     "Buy"
@@ -431,20 +395,10 @@ export function handleSell(event: FPMMSell): void {
   recordSell(event);
   let pnlId = event.params.seller
     .toString()
-    .concat(event.params.questionId.toString())
+    .concat(event.address.toHexString()) // fpmmId
     .concat(event.params.outcomeIndex.toString());
-  updatePnLTransaction(
+  updateUserPlayerPnLTransaction(
     pnlId,
-    event.params.returnAmount,
-    event.params.outcomeTokensSold,
-    "Sell"
-  );
-  let pnlTourId = event.params.seller
-    .toString()
-    .concat(event.params.fpmmId.toString())
-    .concat(event.params.outcomeIndex.toString());
-  updatePnLTourTransaction(
-    pnlTourId,
     event.params.returnAmount,
     event.params.outcomeTokensSold,
     "Sell"
@@ -512,8 +466,9 @@ export function handleFPMMCreated(event: FPMMCreated): void {
   }
 
   outcomeTokenCount *= condition.outcomeSlotCount;
-  condition.fixedProductMarketMakers =
-    condition.fixedProductMarketMakers.concat([addressHexString]);
+  condition.fixedProductMarketMakers = condition.fixedProductMarketMakers.concat(
+    [addressHexString]
+  );
   condition.save();
 
   // Entity fields can be set based on event parameters

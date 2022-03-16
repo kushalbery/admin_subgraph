@@ -1899,3 +1899,82 @@ export class FpmmPoolMembership extends Entity {
     this.set("amount", Value.fromBigInt(value));
   }
 }
+
+export class UserPlayerPnLTransaction extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("userId", Value.fromString(""));
+    this.set("questionId", Value.fromString(""));
+    this.set("investmentAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("tokens", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save UserPlayerPnLTransaction entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save UserPlayerPnLTransaction entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("UserPlayerPnLTransaction", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserPlayerPnLTransaction | null {
+    return changetype<UserPlayerPnLTransaction | null>(
+      store.get("UserPlayerPnLTransaction", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get userId(): string {
+    let value = this.get("userId");
+    return value!.toString();
+  }
+
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
+  }
+
+  get questionId(): string {
+    let value = this.get("questionId");
+    return value!.toString();
+  }
+
+  set questionId(value: string) {
+    this.set("questionId", Value.fromString(value));
+  }
+
+  get investmentAmount(): BigInt {
+    let value = this.get("investmentAmount");
+    return value!.toBigInt();
+  }
+
+  set investmentAmount(value: BigInt) {
+    this.set("investmentAmount", Value.fromBigInt(value));
+  }
+
+  get tokens(): BigInt {
+    let value = this.get("tokens");
+    return value!.toBigInt();
+  }
+
+  set tokens(value: BigInt) {
+    this.set("tokens", Value.fromBigInt(value));
+  }
+}
