@@ -2049,9 +2049,8 @@ export class Player extends Entity {
 
     this.set("currentLongTokenPrice", Value.fromBigInt(BigInt.zero()));
     this.set("currentShortTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("questionId", Value.fromBytes(Bytes.empty()));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("longTokenPricePast24Hour", Value.fromBigInt(BigInt.zero()));
-    this.set("shortTokenPricePast24Hour", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -2098,6 +2097,15 @@ export class Player extends Entity {
     this.set("currentShortTokenPrice", Value.fromBigInt(value));
   }
 
+  get questionId(): Bytes {
+    let value = this.get("questionId");
+    return value!.toBytes();
+  }
+
+  set questionId(value: Bytes) {
+    this.set("questionId", Value.fromBytes(value));
+  }
+
   get timestamp(): BigInt {
     let value = this.get("timestamp");
     return value!.toBigInt();
@@ -2105,24 +2113,6 @@ export class Player extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
-  }
-
-  get longTokenPricePast24Hour(): BigInt {
-    let value = this.get("longTokenPricePast24Hour");
-    return value!.toBigInt();
-  }
-
-  set longTokenPricePast24Hour(value: BigInt) {
-    this.set("longTokenPricePast24Hour", Value.fromBigInt(value));
-  }
-
-  get shortTokenPricePast24Hour(): BigInt {
-    let value = this.get("shortTokenPricePast24Hour");
-    return value!.toBigInt();
-  }
-
-  set shortTokenPricePast24Hour(value: BigInt) {
-    this.set("shortTokenPricePast24Hour", Value.fromBigInt(value));
   }
 
   get trade(): Array<string> {
@@ -2140,8 +2130,8 @@ export class TradePrice extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("currentLongTokenPrice", Value.fromBigInt(BigInt.zero()));
-    this.set("currentShortTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("longTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("shortTokenPrice", Value.fromBigInt(BigInt.zero()));
     this.set("timestamp", Value.fromBigInt(BigInt.zero()));
     this.set("questionId", Value.fromBytes(Bytes.empty()));
     this.set("fpmm", Value.fromString(""));
@@ -2174,22 +2164,22 @@ export class TradePrice extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get currentLongTokenPrice(): BigInt {
-    let value = this.get("currentLongTokenPrice");
+  get longTokenPrice(): BigInt {
+    let value = this.get("longTokenPrice");
     return value!.toBigInt();
   }
 
-  set currentLongTokenPrice(value: BigInt) {
-    this.set("currentLongTokenPrice", Value.fromBigInt(value));
+  set longTokenPrice(value: BigInt) {
+    this.set("longTokenPrice", Value.fromBigInt(value));
   }
 
-  get currentShortTokenPrice(): BigInt {
-    let value = this.get("currentShortTokenPrice");
+  get shortTokenPrice(): BigInt {
+    let value = this.get("shortTokenPrice");
     return value!.toBigInt();
   }
 
-  set currentShortTokenPrice(value: BigInt) {
-    this.set("currentShortTokenPrice", Value.fromBigInt(value));
+  set shortTokenPrice(value: BigInt) {
+    this.set("shortTokenPrice", Value.fromBigInt(value));
   }
 
   get timestamp(): BigInt {
