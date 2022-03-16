@@ -37,7 +37,7 @@ git clone https://github.com/kushalbery/admin_subgraph.git
 Run Ganache-Cli
 
 ```sh
-ganache-cli -h 0.0.0.0 -d  --account_keys_path=keys.json -l=15000000
+ganache-cli -h 0.0.0.0 -d -l=15000000
 ```
 
 ### Step 3
@@ -68,8 +68,9 @@ chmod +x ./start.sh
 ## Query
 
 - Players
-  - ```graphQl
-    {
+
+  ```sh
+  {
       players(first: 1000) {
         id
         currentLongTokenPrice
@@ -87,11 +88,8 @@ chmod +x ./start.sh
         }
       }
     }
-    ```
-    Replace timestamp_lt value
-    ```
-
-    ```
+  Replace timestamp_lt value
+  ```
 
 ## Debug
 
