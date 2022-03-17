@@ -1,13 +1,13 @@
 {
-  "name": "subgraph",
+  "name": "scoutxsubgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ kushalbery/subgraph",
-    "create-local": "graph create --node http://localhost:8020/ kushalbery/subgraph",
-    "remove-local": "graph remove --node http://localhost:8020/ kushalbery/subgraph",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 kushalbery/subgraph"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ kushalbery/scoutxsubgraph",
+    "create-local": "graph create --node http://localhost:8020/ kushalbery/scoutxsubgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ kushalbery/scoutxsubgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 kushalbery/scoutxsubgraph"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.26.0",

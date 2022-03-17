@@ -4,9 +4,9 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ConditionalTokens
-    network: mainnet
+    network: mumbai
     source:
-      address: "0xD8eFF32B3Fa436A3904851A0e95A8cD965c245a5"
+      address: "0x0ca1E062BEF7cD28A2f47527a4D99911F80D8296"
       abi: ConditionalTokens
     mapping:
       kind: ethereum/events
@@ -37,9 +37,9 @@ dataSources:
       file: ./src/ConditionalTokensMapping.ts
   - kind: ethereum/contract
     name: FixedProductMarketMakerFactory
-    network: mainnet
+    network: mumbai
     source:
-      address: "0xa7247A131847e5E3c554A962E926535726fdf5cf"
+      address: "0xD83dacd1E12410BaE481Aa1a6B25Ac60FC40285D"
       abi: FixedProductMarketMakerFactory
     mapping:
       kind: ethereum/events
@@ -59,7 +59,7 @@ dataSources:
 templates:
   - name: FixedProductMarketMaker
     kind: ethereum/contract
-    network: mainnet
+    network: mumbai
     source:
       abi: FixedProductMarketMaker
     mapping:
@@ -98,7 +98,7 @@ templates:
       file: ./src/FixedProductMarketMakerMapping.ts
   - name: ERC20Detailed
     kind: ethereum/contract
-    network: mainnet
+    network: mumbai
     source:
       abi: ERC20Detailed
     mapping:
