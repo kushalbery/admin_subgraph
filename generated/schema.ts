@@ -1905,6 +1905,7 @@ export class UserPnL extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("userId", Value.fromString(""));
     this.set("questionId", Value.fromString(""));
   }
 
@@ -1934,6 +1935,15 @@ export class UserPnL extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get userId(): string {
+    let value = this.get("userId");
+    return value!.toString();
+  }
+
+  set userId(value: string) {
+    this.set("userId", Value.fromString(value));
+  }
+
   get questionId(): string {
     let value = this.get("questionId");
     return value!.toString();
@@ -1943,13 +1953,21 @@ export class UserPnL extends Entity {
     this.set("questionId", Value.fromString(value));
   }
 
-  get tours(): Array<string> {
+  get tours(): Array<string> | null {
     let value = this.get("tours");
-    return value!.toStringArray();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set tours(value: Array<string>) {
-    this.set("tours", Value.fromStringArray(value));
+  set tours(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tours");
+    } else {
+      this.set("tours", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 
@@ -1960,9 +1978,12 @@ export class UserTourPlayerPnLTransaction extends Entity {
 
     this.set("userId", Value.fromString(""));
     this.set("questionId", Value.fromString(""));
+    this.set("fpmmId", Value.fromString(""));
+    this.set("outcomeIndex", Value.fromBigInt(BigInt.zero()));
     this.set("investmentAmount", Value.fromBigInt(BigInt.zero()));
     this.set("tokens", Value.fromBigInt(BigInt.zero()));
     this.set("userPnl", Value.fromString(""));
+    this.set("playerTokenPrice", Value.fromString(""));
   }
 
   save(): void {
@@ -2014,6 +2035,24 @@ export class UserTourPlayerPnLTransaction extends Entity {
     this.set("questionId", Value.fromString(value));
   }
 
+  get fpmmId(): string {
+    let value = this.get("fpmmId");
+    return value!.toString();
+  }
+
+  set fpmmId(value: string) {
+    this.set("fpmmId", Value.fromString(value));
+  }
+
+  get outcomeIndex(): BigInt {
+    let value = this.get("outcomeIndex");
+    return value!.toBigInt();
+  }
+
+  set outcomeIndex(value: BigInt) {
+    this.set("outcomeIndex", Value.fromBigInt(value));
+  }
+
   get investmentAmount(): BigInt {
     let value = this.get("investmentAmount");
     return value!.toBigInt();
@@ -2039,6 +2078,15 @@ export class UserTourPlayerPnLTransaction extends Entity {
 
   set userPnl(value: string) {
     this.set("userPnl", Value.fromString(value));
+  }
+
+  get playerTokenPrice(): string {
+    let value = this.get("playerTokenPrice");
+    return value!.toString();
+  }
+
+  set playerTokenPrice(value: string) {
+    this.set("playerTokenPrice", Value.fromString(value));
   }
 }
 

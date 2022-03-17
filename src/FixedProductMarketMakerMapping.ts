@@ -10,8 +10,8 @@ import {
   UserTourPlayerPnLTransaction,
   UserPnL,
   Player,
-  TradePrice
-} from '../generated/schema';
+  TradePrice,
+} from "../generated/schema";
 import {
   FPMMFundingAdded,
   FPMMFundingRemoved,
@@ -19,9 +19,9 @@ import {
   FPMMSell,
   Transfer,
   FPMMCreated,
-  LongShortCurrentPrice
+  LongShortCurrentPrice,
 } from "../generated/templates/FixedProductMarketMaker/FixedProductMarketMaker";
-import { nthRoot } from './utils/nth-root';
+import { nthRoot } from "./utils/nth-root";
 import {
   updateVolumes,
   updateLiquidityFields,
@@ -57,21 +57,28 @@ function updateUserPlayerPnLTransaction(
   userId: string,
   tradeAmount: BigInt,
   tokensTraded: BigInt,
-  txnType: string
+  txnType: string,
+  fpmmId: string,
+  outcomeIndex: BigInt
 ): void {
   let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
-    let userPnlObj = new UserPnL(userId);
+    let userPnlObj = new UserPnL(userId + "-" + fpmmId);
+    userPnlObj.userId = userId;
     userPnlObj.questionId = questionId;
+    userPnlObj.save();
 
     let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
     newPnLTourTxn.questionId = questionId;
     newPnLTourTxn.userId = userId;
     newPnLTourTxn.investmentAmount = tradeAmount;
     newPnLTourTxn.tokens = tokensTraded;
-    newPnLTourTxn.userPnl = userId;
+    newPnLTourTxn.userPnl = userId + "-" + fpmmId;
+    newPnLTourTxn.fpmmId = fpmmId;
+    newPnLTourTxn.outcomeIndex = outcomeIndex;
+    newPnLTourTxn.playerTokenPrice = fpmmId;
     newPnLTourTxn.save();
-    userPnlObj.save();
+
     return;
   }
   if (txnType === "Buy") {
@@ -333,7 +340,9 @@ export function handleBuy(event: FPMMBuy): void {
     event.params.buyer.toHexString(),
     event.params.investmentAmount,
     event.params.outcomeTokensBought,
-    "Buy"
+    "Buy",
+    event.address.toHexString(),
+    event.params.outcomeIndex
   );
   updateGlobalVolume(
     event.params.investmentAmount,
@@ -425,7 +434,9 @@ export function handleSell(event: FPMMSell): void {
     event.params.seller.toHexString(),
     event.params.returnAmount,
     event.params.outcomeTokensSold,
-    "Sell"
+    "Sell",
+    event.address.toHexString(),
+    event.params.outcomeIndex
   );
   updateGlobalVolume(
     event.params.returnAmount,
@@ -510,16 +521,17 @@ export function handleCurrentPrice(event: LongShortCurrentPrice): void {
   let fpmmAddress = event.address.toHexString();
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
-    log.error('cannot update current price: FixedProductMarketMaker instance for {} not found', [
-      fpmmAddress,
-    ]);
+    log.error(
+      "cannot update current price: FixedProductMarketMaker instance for {} not found",
+      [fpmmAddress]
+    );
     return;
   }
 
   let playerAddress = event.address.toHexString();
   let player = Player.load(playerAddress);
   if (player == null) {
-    log.info('Creating new player', []);
+    log.info("Creating new player", []);
     player = new Player(playerAddress);
   }
   player.currentLongTokenPrice = event.params.currentlongprice;
