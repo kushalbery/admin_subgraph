@@ -76,7 +76,7 @@ function updateUserPlayerPnLTransaction(
     newPnLTourTxn.userPnl = userId + "-" + fpmmId;
     newPnLTourTxn.fpmmId = fpmmId;
     newPnLTourTxn.outcomeIndex = outcomeIndex;
-    newPnLTourTxn.playerTokenPrice = fpmmId + questionId;
+    newPnLTourTxn.playerTokenPrice = fpmmId;
     newPnLTourTxn.save();
 
     return;
