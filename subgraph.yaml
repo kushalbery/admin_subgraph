@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0x0ca1E062BEF7cD28A2f47527a4D99911F80D8296"
       abi: ConditionalTokens
+      startBlock: 25552042
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -41,6 +42,7 @@ dataSources:
     source:
       address: "0xD83dacd1E12410BaE481Aa1a6B25Ac60FC40285D"
       abi: FixedProductMarketMakerFactory
+      startBlock: 25552042
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
