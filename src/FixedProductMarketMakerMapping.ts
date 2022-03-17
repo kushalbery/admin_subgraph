@@ -518,8 +518,6 @@ export function handleFPMMCreated(event: FPMMCreated): void {
 
 export function handleCurrentPrice(event: LongShortCurrentPrice): void {
   let data = event.params.timestamp.toString();
-  log.info("$$$$$$$$$$$$$$$$$$handleCurrentPrice$$$$$$$$$$$$$$ {}", [data]);
-
   let fpmmAddress = event.address.toHexString();
   let fpmm = FixedProductMarketMaker.load(fpmmAddress);
   if (fpmm == null) {
@@ -530,8 +528,7 @@ export function handleCurrentPrice(event: LongShortCurrentPrice): void {
     return;
   }
 
-  let playerAddress =
-    event.address.toHexString() + event.params.questionId.toHexString();
+  let playerAddress = event.address.toHexString();
   let player = Player.load(playerAddress);
   if (player == null) {
     log.info("Creating new player", []);
@@ -540,15 +537,15 @@ export function handleCurrentPrice(event: LongShortCurrentPrice): void {
   player.currentLongTokenPrice = event.params.currentlongprice;
   player.currentShortTokenPrice = event.params.currentshortprice;
   player.timestamp = event.params.timestamp;
-  player.longTokenPricePast24Hour = event.params.currentlongprice;
-  player.shortTokenPricePast24Hour = event.params.currentlongprice;
+  player.questionId = event.params.questionId;
   player.save();
 
-  let tradePrice = new TradePrice(event.params.timestamp.toString());
-  tradePrice.currentLongTokenPrice = event.params.currentlongprice;
-  tradePrice.currentShortTokenPrice = event.params.currentshortprice;
+  let tradePrice = new TradePrice(event.transaction.hash.toHexString());
+  tradePrice.longTokenPrice = event.params.currentlongprice;
+  tradePrice.shortTokenPrice = event.params.currentshortprice;
   tradePrice.timestamp = event.params.timestamp;
   tradePrice.questionId = event.params.questionId;
   tradePrice.fpmm = event.address.toHexString();
+  tradePrice.player = event.address.toHexString();
   tradePrice.save();
 }

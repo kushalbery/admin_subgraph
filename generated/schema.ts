@@ -2257,3 +2257,180 @@ export class TradePrice extends Entity {
     this.set("fpmm", Value.fromString(value));
   }
 }
+
+export class Player extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("currentLongTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("currentShortTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("questionId", Value.fromBytes(Bytes.empty()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Player entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Player entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Player", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Player | null {
+    return changetype<Player | null>(store.get("Player", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currentLongTokenPrice(): BigInt {
+    let value = this.get("currentLongTokenPrice");
+    return value!.toBigInt();
+  }
+
+  set currentLongTokenPrice(value: BigInt) {
+    this.set("currentLongTokenPrice", Value.fromBigInt(value));
+  }
+
+  get currentShortTokenPrice(): BigInt {
+    let value = this.get("currentShortTokenPrice");
+    return value!.toBigInt();
+  }
+
+  set currentShortTokenPrice(value: BigInt) {
+    this.set("currentShortTokenPrice", Value.fromBigInt(value));
+  }
+
+  get questionId(): Bytes {
+    let value = this.get("questionId");
+    return value!.toBytes();
+  }
+
+  set questionId(value: Bytes) {
+    this.set("questionId", Value.fromBytes(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get trade(): Array<string> {
+    let value = this.get("trade");
+    return value!.toStringArray();
+  }
+
+  set trade(value: Array<string>) {
+    this.set("trade", Value.fromStringArray(value));
+  }
+}
+
+export class TradePrice extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("longTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("shortTokenPrice", Value.fromBigInt(BigInt.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("questionId", Value.fromBytes(Bytes.empty()));
+    this.set("fpmm", Value.fromString(""));
+    this.set("player", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TradePrice entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save TradePrice entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("TradePrice", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TradePrice | null {
+    return changetype<TradePrice | null>(store.get("TradePrice", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get longTokenPrice(): BigInt {
+    let value = this.get("longTokenPrice");
+    return value!.toBigInt();
+  }
+
+  set longTokenPrice(value: BigInt) {
+    this.set("longTokenPrice", Value.fromBigInt(value));
+  }
+
+  get shortTokenPrice(): BigInt {
+    let value = this.get("shortTokenPrice");
+    return value!.toBigInt();
+  }
+
+  set shortTokenPrice(value: BigInt) {
+    this.set("shortTokenPrice", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get questionId(): Bytes {
+    let value = this.get("questionId");
+    return value!.toBytes();
+  }
+
+  set questionId(value: Bytes) {
+    this.set("questionId", Value.fromBytes(value));
+  }
+
+  get fpmm(): string {
+    let value = this.get("fpmm");
+    return value!.toString();
+  }
+
+  set fpmm(value: string) {
+    this.set("fpmm", Value.fromString(value));
+  }
+
+  get player(): string {
+    let value = this.get("player");
+    return value!.toString();
+  }
+
+  set player(value: string) {
+    this.set("player", Value.fromString(value));
+  }
+}

@@ -352,16 +352,17 @@ type Player @entity {
   id: ID!
   currentLongTokenPrice: BigInt!
   currentShortTokenPrice: BigInt!
+  questionId: Bytes!
   timestamp: BigInt!
-  longTokenPricePast24Hour: BigInt!
-  shortTokenPricePast24Hour: BigInt!
+  trade: [TradePrice!]! @derivedFrom(field: "player")
 }
 
 type TradePrice @entity {
   id: ID!
-  currentLongTokenPrice: BigInt!
-  currentShortTokenPrice: BigInt!
+  longTokenPrice: BigInt!
+  shortTokenPrice: BigInt!
   timestamp: BigInt!
   questionId: Bytes!
   fpmm: FixedProductMarketMaker!
+  player: Player!
 }
