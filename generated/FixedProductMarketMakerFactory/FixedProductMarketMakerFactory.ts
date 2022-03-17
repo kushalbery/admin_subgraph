@@ -56,9 +56,32 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     );
   }
 
+  questionIdToFpmmAddress(param0: Bytes): Address {
+    let result = super.call(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   createFixedProductMarketMaker(
-    playername: string,
-    playersymbol: string,
+    lpTokenName: string,
+    lpTokenSymbol: string,
     _fee: BigInt,
     _questionId: Bytes
   ): Address {
@@ -66,8 +89,8 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
       "createFixedProductMarketMaker",
       "createFixedProductMarketMaker(string,string,uint256,bytes32):(address)",
       [
-        ethereum.Value.fromString(playername),
-        ethereum.Value.fromString(playersymbol),
+        ethereum.Value.fromString(lpTokenName),
+        ethereum.Value.fromString(lpTokenSymbol),
         ethereum.Value.fromUnsignedBigInt(_fee),
         ethereum.Value.fromFixedBytes(_questionId)
       ]
@@ -77,8 +100,8 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
   }
 
   try_createFixedProductMarketMaker(
-    playername: string,
-    playersymbol: string,
+    lpTokenName: string,
+    lpTokenSymbol: string,
     _fee: BigInt,
     _questionId: Bytes
   ): ethereum.CallResult<Address> {
@@ -86,8 +109,8 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
       "createFixedProductMarketMaker",
       "createFixedProductMarketMaker(string,string,uint256,bytes32):(address)",
       [
-        ethereum.Value.fromString(playername),
-        ethereum.Value.fromString(playersymbol),
+        ethereum.Value.fromString(lpTokenName),
+        ethereum.Value.fromString(lpTokenSymbol),
         ethereum.Value.fromUnsignedBigInt(_fee),
         ethereum.Value.fromFixedBytes(_questionId)
       ]
@@ -99,220 +122,21 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  getaddressbyquestionId(_questionId: Bytes): Address {
+  getAddressByQuestionId(_questionId: Bytes): Address {
     let result = super.call(
-      "getaddressbyquestionId",
-      "getaddressbyquestionId(bytes32):(address)",
+      "getAddressByQuestionId",
+      "getAddressByQuestionId(bytes32):(address)",
       [ethereum.Value.fromFixedBytes(_questionId)]
     );
 
     return result[0].toAddress();
   }
 
-  try_getaddressbyquestionId(_questionId: Bytes): ethereum.CallResult<Address> {
+  try_getAddressByQuestionId(_questionId: Bytes): ethereum.CallResult<Address> {
     let result = super.tryCall(
-      "getaddressbyquestionId",
-      "getaddressbyquestionId(bytes32):(address)",
+      "getAddressByQuestionId",
+      "getAddressByQuestionId(bytes32):(address)",
       [ethereum.Value.fromFixedBytes(_questionId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  getcollectionIdByquestionId(_questionId: Bytes, outcomeIndex: BigInt): Bytes {
-    let result = super.call(
-      "getcollectionIdByquestionId",
-      "getcollectionIdByquestionId(bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(_questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeIndex)
-      ]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_getcollectionIdByquestionId(
-    _questionId: Bytes,
-    outcomeIndex: BigInt
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "getcollectionIdByquestionId",
-      "getcollectionIdByquestionId(bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(_questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeIndex)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  getconditionIdByquestionId(_questionId: Bytes): Bytes {
-    let result = super.call(
-      "getconditionIdByquestionId",
-      "getconditionIdByquestionId(bytes32):(bytes32)",
-      [ethereum.Value.fromFixedBytes(_questionId)]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_getconditionIdByquestionId(
-    _questionId: Bytes
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "getconditionIdByquestionId",
-      "getconditionIdByquestionId(bytes32):(bytes32)",
-      [ethereum.Value.fromFixedBytes(_questionId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  getpositionIdByquestionId(_questionId: Bytes, outcomeIndex: BigInt): BigInt {
-    let result = super.call(
-      "getpositionIdByquestionId",
-      "getpositionIdByquestionId(bytes32,uint256):(uint256)",
-      [
-        ethereum.Value.fromFixedBytes(_questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeIndex)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_getpositionIdByquestionId(
-    _questionId: Bytes,
-    outcomeIndex: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getpositionIdByquestionId",
-      "getpositionIdByquestionId(bytes32,uint256):(uint256)",
-      [
-        ethereum.Value.fromFixedBytes(_questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeIndex)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  questionIdtoCollectionId(param0: Bytes, param1: BigInt): Bytes {
-    let result = super.call(
-      "questionIdtoCollectionId",
-      "questionIdtoCollectionId(bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_questionIdtoCollectionId(
-    param0: Bytes,
-    param1: BigInt
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "questionIdtoCollectionId",
-      "questionIdtoCollectionId(bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  questionIdtoConditionId(param0: Bytes): Bytes {
-    let result = super.call(
-      "questionIdtoConditionId",
-      "questionIdtoConditionId(bytes32):(bytes32)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_questionIdtoConditionId(param0: Bytes): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "questionIdtoConditionId",
-      "questionIdtoConditionId(bytes32):(bytes32)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  questionIdtoPositionId(param0: Bytes, param1: BigInt): BigInt {
-    let result = super.call(
-      "questionIdtoPositionId",
-      "questionIdtoPositionId(bytes32,uint256):(uint256)",
-      [
-        ethereum.Value.fromFixedBytes(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_questionIdtoPositionId(
-    param0: Bytes,
-    param1: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "questionIdtoPositionId",
-      "questionIdtoPositionId(bytes32,uint256):(uint256)",
-      [
-        ethereum.Value.fromFixedBytes(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  questionIdtoaddress(param0: Bytes): Address {
-    let result = super.call(
-      "questionIdtoaddress",
-      "questionIdtoaddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_questionIdtoaddress(param0: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "questionIdtoaddress",
-      "questionIdtoaddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -377,11 +201,11 @@ export class CreateFixedProductMarketMakerCall__Inputs {
     this._call = call;
   }
 
-  get playername(): string {
+  get lpTokenName(): string {
     return this._call.inputValues[0].value.toString();
   }
 
-  get playersymbol(): string {
+  get lpTokenSymbol(): string {
     return this._call.inputValues[1].value.toString();
   }
 

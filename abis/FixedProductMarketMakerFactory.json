@@ -66,13 +66,33 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "questionIdToFpmmAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
-        "name": "playername",
+        "name": "lpTokenName",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "playersymbol",
+        "name": "lpTokenSymbol",
         "type": "string"
       },
       {
@@ -89,7 +109,7 @@
     "name": "createFixedProductMarketMaker",
     "outputs": [
       {
-        "internalType": "contract FixedProductMarketMaker",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -105,7 +125,7 @@
         "type": "bytes32"
       }
     ],
-    "name": "getaddressbyquestionId",
+    "name": "getAddressByQuestionId",
     "outputs": [
       {
         "internalType": "address",
@@ -114,159 +134,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_questionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outcomeIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "getcollectionIdByquestionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_questionId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getconditionIdByquestionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_questionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outcomeIndex",
-        "type": "uint256"
-      }
-    ],
-    "name": "getpositionIdByquestionId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "questionIdtoCollectionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "questionIdtoConditionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "questionIdtoPositionId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "name": "questionIdtoaddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   }
 ]

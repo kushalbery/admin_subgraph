@@ -341,7 +341,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -365,108 +366,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parentCollectionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "conditionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "indexSet",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCollectionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "oracle",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "questionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outcomeSlotCount",
-        "type": "uint256"
-      }
-    ],
-    "name": "getConditionId",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "conditionId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getOutcomeSlotCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "collateralToken",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "collectionId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getPositionId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -490,40 +391,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "collateralToken",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "parentCollectionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "conditionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "partition",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mergePositions",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -542,7 +411,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -566,76 +436,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "oracle",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "questionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "outcomeSlotCount",
-        "type": "uint256"
-      }
-    ],
-    "name": "prepareCondition",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "collateralToken",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "parentCollectionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "conditionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "indexSets",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "redeemPositions",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "questionId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "payouts",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "reportPayouts",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -724,6 +526,87 @@
   {
     "inputs": [
       {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "uri",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "oracle",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "questionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "outcomeSlotCount",
+        "type": "uint256"
+      }
+    ],
+    "name": "prepareCondition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "questionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "payouts",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "reportPayouts",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "contract IERC20",
         "name": "collateralToken",
         "type": "address"
@@ -757,39 +640,167 @@
   {
     "inputs": [
       {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
-    ],
-    "name": "supportsInterface",
-    "outputs": [
+        "internalType": "contract IERC20",
+        "name": "collateralToken",
+        "type": "address"
+      },
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType": "bytes32",
+        "name": "parentCollectionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "conditionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "partition",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "mergePositions",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "collateralToken",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "parentCollectionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "conditionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "indexSets",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "redeemPositions",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "conditionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getOutcomeSlotCount",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
     ],
-    "name": "uri",
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "oracle",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "questionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "outcomeSlotCount",
+        "type": "uint256"
+      }
+    ],
+    "name": "getConditionId",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "",
-        "type": "string"
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "parentCollectionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "conditionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "indexSet",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "collateralToken",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "collectionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getPositionId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
   }
 ]
