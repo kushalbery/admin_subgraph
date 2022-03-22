@@ -340,6 +340,7 @@ export class Account extends Entity {
     this.set("numTrades", Value.fromBigInt(BigInt.zero()));
     this.set("scaledCollateralVolume", Value.fromBigDecimal(BigDecimal.zero()));
     this.set("lastTradedTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("investmentAmount", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -525,6 +526,15 @@ export class Account extends Entity {
     } else {
       this.set("redemptions", Value.fromStringArray(<Array<string>>value));
     }
+  }
+
+  get investmentAmount(): BigInt {
+    let value = this.get("investmentAmount");
+    return value!.toBigInt();
+  }
+
+  set investmentAmount(value: BigInt) {
+    this.set("investmentAmount", Value.fromBigInt(value));
   }
 }
 
