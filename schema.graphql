@@ -77,6 +77,8 @@ type Account @entity {
   merges: [Merge!] @derivedFrom(field: "stakeholder")
   "Redemption of underlying collateral after a market has resolved"
   redemptions: [Redemption!] @derivedFrom(field: "redeemer")
+  "Current inversted amount of user for all players"
+  investmentAmount: BigInt!
 }
 
 type Collateral @entity {
