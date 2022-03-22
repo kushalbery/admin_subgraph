@@ -1,4 +1,6 @@
 specVersion: 0.0.2
+description: ScoutX
+repository: https://github.com/kushalbery/scoutxsubgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -6,9 +8,9 @@ dataSources:
     name: ConditionalTokens
     network: mumbai
     source:
-      address: "0x0ca1E062BEF7cD28A2f47527a4D99911F80D8296"
+      address: "0x995955E42Aab0C44CdAdc4d0E77f359A9b34A572"
       abi: ConditionalTokens
-      startBlock: 22552042
+      startBlock: 24552042
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -40,9 +42,9 @@ dataSources:
     name: FixedProductMarketMakerFactory
     network: mumbai
     source:
-      address: "0xD83dacd1E12410BaE481Aa1a6B25Ac60FC40285D"
+      address: "0x01C4FF0f94f743725ABba6c8b4f328f195Ce83ed"
       abi: FixedProductMarketMakerFactory
-      startBlock: 22552042
+      startBlock: 24552042
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
