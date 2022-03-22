@@ -91,6 +91,31 @@ chmod +x ./start.sh
   Replace timestamp_lt value
   ```
 
+- User Profit & Loss Data
+
+  ```
+    query getUserPnl {
+      userPnLs(where :{userId : "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"}, subgraphError:allow){
+        questionId
+        tours{
+          id
+          userId
+          questionId
+          investmentAmount
+          fpmmId
+          outcomeIndex
+          tokens
+          playerTokenPrice{
+            currentLongTokenPrice
+            currentShortTokenPrice
+          }
+        }
+      }
+    }
+  ```
+
+  Replace userId
+
 ## Debug
 
 - In case of your graph-node exit with `admin_subgraph_graph-node_1 exited with code 137` try restarting the graph-node container
@@ -98,3 +123,7 @@ chmod +x ./start.sh
   - ```sh
     docker rm $(docker ps -a -q)
     ```
+
+```
+
+```

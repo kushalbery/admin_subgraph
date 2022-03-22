@@ -56,6 +56,29 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     );
   }
 
+  questionIdToFpmmAddress(param0: Bytes): Address {
+    let result = super.call(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   createFixedProductMarketMaker(
     lpTokenName: string,
     lpTokenSymbol: string,
@@ -114,29 +137,6 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
       "getAddressByQuestionId",
       "getAddressByQuestionId(bytes32):(address)",
       [ethereum.Value.fromFixedBytes(_questionId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  questionIdToFpmmAddress(param0: Bytes): Address {
-    let result = super.call(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
