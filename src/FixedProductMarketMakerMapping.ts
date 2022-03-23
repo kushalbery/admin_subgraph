@@ -92,13 +92,17 @@ function updateUserPlayerPnLTransaction(
     userPlayerPnLTransaction.save();
     return;
   }
-  userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
-    tradeAmount
-  );
-  userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.tokens.minus(
-    tokensTraded
-  );
-  userPlayerPnLTransaction.save();
+  if (userPlayerPnLTransaction.tokens.minus(tokensTraded) > new BigInt(0)) {
+    userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
+      tradeAmount
+    );
+    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.tokens.minus(
+      tokensTraded
+    );
+    userPlayerPnLTransaction.save();
+    return;
+  }
+  log.error("Negative value found for sell transaction id : {} ", [id]);
 }
 
 function updateInvestmentAmountOnBuy(id: string, tradeAmount: BigInt): void {
@@ -129,12 +133,16 @@ function updateInvestmentAmountOnSell(
     return;
   }
   // ia = ia - (quantitiy * avg buying price)
-  accountDetails.investmentAmount = accountDetails.investmentAmount.minus(
-    outcomeTokensSold
-      .times(playerTradeData.investmentAmount)
-      .div(playerTradeData.tokens)
-  );
-  accountDetails.save();
+  if (playerTradeData.tokens != new BigInt(0)) {
+    accountDetails.investmentAmount = accountDetails.investmentAmount.minus(
+      outcomeTokensSold
+        .times(playerTradeData.investmentAmount)
+        .div(playerTradeData.tokens)
+    );
+    accountDetails.save();
+    return;
+  }
+  log.error("0 tokens found for userTourId : {}", [tourPnlId]);
 }
 
 function recordBuy(event: FPMMBuy): void {
