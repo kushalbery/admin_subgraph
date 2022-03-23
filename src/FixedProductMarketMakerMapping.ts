@@ -105,7 +105,11 @@ function updateUserPlayerPnLTransaction(
   log.error("Negative value found for sell transaction id : {} ", [id]);
 }
 
-function updateInvestmentAmountOnBuy(id: string, tradeAmount: BigInt, feeAmount: BigInt): void {
+function updateInvestmentAmountOnBuy(
+  id: string,
+  tradeAmount: BigInt,
+  feeAmount: BigInt
+): void {
   let accountDetails = Account.load(id);
   if (accountDetails == null) {
     log.error("User not found with walletId {}", [id]);
@@ -129,7 +133,9 @@ function updateInvestmentAmountOnSell(
     return;
   }
   let tradeAmountPlusFees = tradeAmount.plus(feeAmount);
-  accountDetails.investmentAmount = accountDetails.investmentAmount.minus(tradeAmountPlusFees);
+  accountDetails.investmentAmount = accountDetails.investmentAmount.minus(
+    tradeAmountPlusFees
+  );
   accountDetails.save();
 }
 
@@ -369,7 +375,7 @@ export function handleBuy(event: FPMMBuy): void {
     pnlId,
     event.params.questionId.toHexString(),
     event.params.buyer.toHexString(),
-    event.params.investmentAmount,
+    investmentAmountMinusFees,
     event.params.outcomeTokensBought,
     "Buy",
     event.address.toHexString(),
@@ -473,7 +479,7 @@ export function handleSell(event: FPMMSell): void {
     pnlId,
     event.params.questionId.toHexString(),
     event.params.seller.toHexString(),
-    event.params.returnAmount,
+    returnAmountPlusFees,
     event.params.outcomeTokensSold,
     "Sell",
     event.address.toHexString(),
