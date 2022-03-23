@@ -105,44 +105,32 @@ function updateUserPlayerPnLTransaction(
   log.error("Negative value found for sell transaction id : {} ", [id]);
 }
 
-function updateInvestmentAmountOnBuy(id: string, tradeAmount: BigInt): void {
+function updateInvestmentAmountOnBuy(id: string, tradeAmount: BigInt, feeAmount: BigInt): void {
   let accountDetails = Account.load(id);
   if (accountDetails == null) {
     log.error("User not found with walletId {}", [id]);
     return;
   }
+  let tradeAmountMinusFees = tradeAmount.minus(feeAmount);
   accountDetails.investmentAmount = accountDetails.investmentAmount.plus(
-    tradeAmount
+    tradeAmountMinusFees
   );
   accountDetails.save();
 }
 
 function updateInvestmentAmountOnSell(
   id: string,
-  tourPnlId: string,
-  outcomeTokensSold: BigInt
+  tradeAmount: BigInt,
+  feeAmount: BigInt
 ): void {
   let accountDetails = Account.load(id);
   if (accountDetails == null) {
     log.error("User not found with walletId {}", [id]);
     return;
   }
-  let playerTradeData = UserTourPlayerPnLTransaction.load(tourPnlId);
-  if (playerTradeData == null) {
-    log.error("UserTourPlayerPnLTransaction not found with id {}", [tourPnlId]);
-    return;
-  }
-  // ia = ia - (quantitiy * avg buying price)
-  if (playerTradeData.tokens != new BigInt(0)) {
-    accountDetails.investmentAmount = accountDetails.investmentAmount.minus(
-      outcomeTokensSold
-        .times(playerTradeData.investmentAmount)
-        .div(playerTradeData.tokens)
-    );
-    accountDetails.save();
-    return;
-  }
-  log.error("0 tokens found for userTourId : {}", [tourPnlId]);
+  let tradeAmountPlusFees = tradeAmount.plus(feeAmount);
+  accountDetails.investmentAmount = accountDetails.investmentAmount.minus(tradeAmountPlusFees);
+  accountDetails.save();
 }
 
 function recordBuy(event: FPMMBuy): void {
@@ -377,14 +365,6 @@ export function handleBuy(event: FPMMBuy): void {
     .concat("-")
     .concat(event.params.outcomeIndex.toString());
 
-  //   id: string,
-  // questionId: string,
-  // userId: string,
-  // tradeAmount: BigInt,
-  // tokensTraded: BigInt,
-  // txnType: string,
-  // fpmmId: string,
-  // outcomeIndex: BigInt
   updateUserPlayerPnLTransaction(
     pnlId,
     event.params.questionId.toHexString(),
@@ -397,7 +377,8 @@ export function handleBuy(event: FPMMBuy): void {
   );
   updateInvestmentAmountOnBuy(
     event.params.buyer.toHexString(),
-    event.params.investmentAmount
+    event.params.investmentAmount,
+    event.params.feeAmount
   );
   updateGlobalVolume(
     event.params.investmentAmount,
@@ -485,8 +466,8 @@ export function handleSell(event: FPMMSell): void {
     .concat(event.params.outcomeIndex.toString());
   updateInvestmentAmountOnSell(
     event.params.seller.toHexString(),
-    pnlId,
-    event.params.outcomeTokensSold
+    event.params.returnAmount,
+    event.params.feeAmount
   );
   updateUserPlayerPnLTransaction(
     pnlId,
