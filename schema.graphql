@@ -332,6 +332,7 @@ type UserPnL @entity {
   id: ID!
   userId: String!
   questionId: String!
+  playerTokens: BigInt!
   tours: [UserTourPlayerPnLTransaction!] @derivedFrom(field: "userPnl")
 }
 

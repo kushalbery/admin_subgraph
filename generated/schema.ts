@@ -1917,6 +1917,7 @@ export class UserPnL extends Entity {
 
     this.set("userId", Value.fromString(""));
     this.set("questionId", Value.fromString(""));
+    this.set("playerTokens", Value.fromBigInt(BigInt.zero()));
   }
 
   save(): void {
@@ -1961,6 +1962,15 @@ export class UserPnL extends Entity {
 
   set questionId(value: string) {
     this.set("questionId", Value.fromString(value));
+  }
+
+  get playerTokens(): BigInt {
+    let value = this.get("playerTokens");
+    return value!.toBigInt();
+  }
+
+  set playerTokens(value: BigInt) {
+    this.set("playerTokens", Value.fromBigInt(value));
   }
 
   get tours(): Array<string> | null {
