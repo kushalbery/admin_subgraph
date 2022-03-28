@@ -64,11 +64,17 @@ function updateUserPlayerPnLTransaction(
 ): void {
   let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
-    let userPnlObj = new UserPnL(userId + "-" + fpmmId);
-    userPnlObj.userId = userId;
-    userPnlObj.questionId = questionId;
-    userPnlObj.playerTokens = tokensTraded;
-    userPnlObj.save();
+    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
+    if (userPnlObj == null) {
+      let userPnlObj = new UserPnL(userId + "-" + fpmmId);
+      userPnlObj.userId = userId;
+      userPnlObj.questionId = questionId;
+      userPnlObj.playerTokens = tokensTraded;
+      userPnlObj.save();
+    } else {
+      userPnlObj.playerTokens = userPnlObj.playerTokens.plus(tokensTraded);
+      userPnlObj.save();
+    }
 
     let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
     newPnLTourTxn.questionId = questionId;
