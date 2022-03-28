@@ -67,6 +67,7 @@ function updateUserPlayerPnLTransaction(
     let userPnlObj = new UserPnL(userId + "-" + fpmmId);
     userPnlObj.userId = userId;
     userPnlObj.questionId = questionId;
+    userPnlObj.playerTokens = tokensTraded;
     userPnlObj.save();
 
     let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
@@ -83,6 +84,12 @@ function updateUserPlayerPnLTransaction(
     return;
   }
   if (txnType === "Buy") {
+    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
+    if (userPnlObj != null) {
+      userPnlObj.playerTokens = userPnlObj.playerTokens.plus(tokensTraded);
+      userPnlObj.save();
+    }
+
     userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.tokens.plus(
       tokensTraded
     );
@@ -93,6 +100,12 @@ function updateUserPlayerPnLTransaction(
     return;
   }
   if (userPlayerPnLTransaction.tokens.minus(tokensTraded) > new BigInt(0)) {
+    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
+    if (userPnlObj != null) {
+      userPnlObj.playerTokens = userPnlObj.playerTokens.minus(tokensTraded);
+      userPnlObj.save();
+    }
+
     userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
       tradeAmount
     );
