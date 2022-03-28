@@ -60,7 +60,8 @@ function updateUserPlayerPnLTransaction(
   tokensTraded: BigInt,
   txnType: string,
   fpmmId: string,
-  outcomeIndex: BigInt
+  outcomeIndex: BigInt,
+  factory: string
 ): void {
   let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
   if (userPlayerPnLTransaction == null) {
@@ -78,6 +79,7 @@ function updateUserPlayerPnLTransaction(
     newPnLTourTxn.fpmmId = fpmmId;
     newPnLTourTxn.outcomeIndex = outcomeIndex;
     newPnLTourTxn.playerTokenPrice = fpmmId;
+    newPnLTourTxn.season = factory;
     newPnLTourTxn.save();
 
     return;
@@ -379,7 +381,8 @@ export function handleBuy(event: FPMMBuy): void {
     event.params.outcomeTokensBought,
     "Buy",
     event.address.toHexString(),
-    event.params.outcomeIndex
+    event.params.outcomeIndex,
+    event.params.factoryAddress.toHexString()
   );
   updateInvestmentAmountOnBuy(
     event.params.buyer.toHexString(),
@@ -483,7 +486,8 @@ export function handleSell(event: FPMMSell): void {
     event.params.outcomeTokensSold,
     "Sell",
     event.address.toHexString(),
-    event.params.outcomeIndex
+    event.params.outcomeIndex,
+    event.params.factoryAddress.toHexString()
   );
   updateGlobalVolume(
     event.params.returnAmount,

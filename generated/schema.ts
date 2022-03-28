@@ -1073,337 +1073,6 @@ export class Redemption extends Entity {
   }
 }
 
-export class FixedProductMarketMaker extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("creator", Value.fromBytes(Bytes.empty()));
-    this.set("creationTimestamp", Value.fromBigInt(BigInt.zero()));
-    this.set("creationTransactionHash", Value.fromBytes(Bytes.empty()));
-    this.set("collateralToken", Value.fromString(""));
-    this.set("fee", Value.fromBigInt(BigInt.zero()));
-    this.set("tradesQuantity", Value.fromBigInt(BigInt.zero()));
-    this.set("buysQuantity", Value.fromBigInt(BigInt.zero()));
-    this.set("sellsQuantity", Value.fromBigInt(BigInt.zero()));
-    this.set("liquidityAddQuantity", Value.fromBigInt(BigInt.zero()));
-    this.set("liquidityRemoveQuantity", Value.fromBigInt(BigInt.zero()));
-    this.set("collateralVolume", Value.fromBigInt(BigInt.zero()));
-    this.set("scaledCollateralVolume", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("collateralBuyVolume", Value.fromBigInt(BigInt.zero()));
-    this.set(
-      "scaledCollateralBuyVolume",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set("collateralSellVolume", Value.fromBigInt(BigInt.zero()));
-    this.set(
-      "scaledCollateralSellVolume",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set("feeVolume", Value.fromBigInt(BigInt.zero()));
-    this.set("scaledFeeVolume", Value.fromBigDecimal(BigDecimal.zero()));
-    this.set("liquidityParameter", Value.fromBigInt(BigInt.zero()));
-    this.set(
-      "scaledLiquidityParameter",
-      Value.fromBigDecimal(BigDecimal.zero())
-    );
-    this.set("outcomeTokenAmounts", Value.fromBigIntArray(new Array(0)));
-    this.set("outcomeTokenPrices", Value.fromBigDecimalArray(new Array(0)));
-    this.set("lastActiveDay", Value.fromBigInt(BigInt.zero()));
-    this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(
-      id != null,
-      "Cannot save FixedProductMarketMaker entity without an ID"
-    );
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        "Cannot save FixedProductMarketMaker entity with non-string ID. " +
-          'Considering using .toHex() to convert the "id" to a string.'
-      );
-      store.set("FixedProductMarketMaker", id.toString(), this);
-    }
-  }
-
-  static load(id: string): FixedProductMarketMaker | null {
-    return changetype<FixedProductMarketMaker | null>(
-      store.get("FixedProductMarketMaker", id)
-    );
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get creator(): Bytes {
-    let value = this.get("creator");
-    return value!.toBytes();
-  }
-
-  set creator(value: Bytes) {
-    this.set("creator", Value.fromBytes(value));
-  }
-
-  get creationTimestamp(): BigInt {
-    let value = this.get("creationTimestamp");
-    return value!.toBigInt();
-  }
-
-  set creationTimestamp(value: BigInt) {
-    this.set("creationTimestamp", Value.fromBigInt(value));
-  }
-
-  get creationTransactionHash(): Bytes {
-    let value = this.get("creationTransactionHash");
-    return value!.toBytes();
-  }
-
-  set creationTransactionHash(value: Bytes) {
-    this.set("creationTransactionHash", Value.fromBytes(value));
-  }
-
-  get collateralToken(): string {
-    let value = this.get("collateralToken");
-    return value!.toString();
-  }
-
-  set collateralToken(value: string) {
-    this.set("collateralToken", Value.fromString(value));
-  }
-
-  get conditions(): Array<string> | null {
-    let value = this.get("conditions");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set conditions(value: Array<string> | null) {
-    if (!value) {
-      this.unset("conditions");
-    } else {
-      this.set("conditions", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
-  get fee(): BigInt {
-    let value = this.get("fee");
-    return value!.toBigInt();
-  }
-
-  set fee(value: BigInt) {
-    this.set("fee", Value.fromBigInt(value));
-  }
-
-  get tradesQuantity(): BigInt {
-    let value = this.get("tradesQuantity");
-    return value!.toBigInt();
-  }
-
-  set tradesQuantity(value: BigInt) {
-    this.set("tradesQuantity", Value.fromBigInt(value));
-  }
-
-  get buysQuantity(): BigInt {
-    let value = this.get("buysQuantity");
-    return value!.toBigInt();
-  }
-
-  set buysQuantity(value: BigInt) {
-    this.set("buysQuantity", Value.fromBigInt(value));
-  }
-
-  get sellsQuantity(): BigInt {
-    let value = this.get("sellsQuantity");
-    return value!.toBigInt();
-  }
-
-  set sellsQuantity(value: BigInt) {
-    this.set("sellsQuantity", Value.fromBigInt(value));
-  }
-
-  get liquidityAddQuantity(): BigInt {
-    let value = this.get("liquidityAddQuantity");
-    return value!.toBigInt();
-  }
-
-  set liquidityAddQuantity(value: BigInt) {
-    this.set("liquidityAddQuantity", Value.fromBigInt(value));
-  }
-
-  get liquidityRemoveQuantity(): BigInt {
-    let value = this.get("liquidityRemoveQuantity");
-    return value!.toBigInt();
-  }
-
-  set liquidityRemoveQuantity(value: BigInt) {
-    this.set("liquidityRemoveQuantity", Value.fromBigInt(value));
-  }
-
-  get collateralVolume(): BigInt {
-    let value = this.get("collateralVolume");
-    return value!.toBigInt();
-  }
-
-  set collateralVolume(value: BigInt) {
-    this.set("collateralVolume", Value.fromBigInt(value));
-  }
-
-  get scaledCollateralVolume(): BigDecimal {
-    let value = this.get("scaledCollateralVolume");
-    return value!.toBigDecimal();
-  }
-
-  set scaledCollateralVolume(value: BigDecimal) {
-    this.set("scaledCollateralVolume", Value.fromBigDecimal(value));
-  }
-
-  get collateralBuyVolume(): BigInt {
-    let value = this.get("collateralBuyVolume");
-    return value!.toBigInt();
-  }
-
-  set collateralBuyVolume(value: BigInt) {
-    this.set("collateralBuyVolume", Value.fromBigInt(value));
-  }
-
-  get scaledCollateralBuyVolume(): BigDecimal {
-    let value = this.get("scaledCollateralBuyVolume");
-    return value!.toBigDecimal();
-  }
-
-  set scaledCollateralBuyVolume(value: BigDecimal) {
-    this.set("scaledCollateralBuyVolume", Value.fromBigDecimal(value));
-  }
-
-  get collateralSellVolume(): BigInt {
-    let value = this.get("collateralSellVolume");
-    return value!.toBigInt();
-  }
-
-  set collateralSellVolume(value: BigInt) {
-    this.set("collateralSellVolume", Value.fromBigInt(value));
-  }
-
-  get scaledCollateralSellVolume(): BigDecimal {
-    let value = this.get("scaledCollateralSellVolume");
-    return value!.toBigDecimal();
-  }
-
-  set scaledCollateralSellVolume(value: BigDecimal) {
-    this.set("scaledCollateralSellVolume", Value.fromBigDecimal(value));
-  }
-
-  get feeVolume(): BigInt {
-    let value = this.get("feeVolume");
-    return value!.toBigInt();
-  }
-
-  set feeVolume(value: BigInt) {
-    this.set("feeVolume", Value.fromBigInt(value));
-  }
-
-  get scaledFeeVolume(): BigDecimal {
-    let value = this.get("scaledFeeVolume");
-    return value!.toBigDecimal();
-  }
-
-  set scaledFeeVolume(value: BigDecimal) {
-    this.set("scaledFeeVolume", Value.fromBigDecimal(value));
-  }
-
-  get liquidityParameter(): BigInt {
-    let value = this.get("liquidityParameter");
-    return value!.toBigInt();
-  }
-
-  set liquidityParameter(value: BigInt) {
-    this.set("liquidityParameter", Value.fromBigInt(value));
-  }
-
-  get scaledLiquidityParameter(): BigDecimal {
-    let value = this.get("scaledLiquidityParameter");
-    return value!.toBigDecimal();
-  }
-
-  set scaledLiquidityParameter(value: BigDecimal) {
-    this.set("scaledLiquidityParameter", Value.fromBigDecimal(value));
-  }
-
-  get outcomeTokenAmounts(): Array<BigInt> {
-    let value = this.get("outcomeTokenAmounts");
-    return value!.toBigIntArray();
-  }
-
-  set outcomeTokenAmounts(value: Array<BigInt>) {
-    this.set("outcomeTokenAmounts", Value.fromBigIntArray(value));
-  }
-
-  get outcomeTokenPrices(): Array<BigDecimal> {
-    let value = this.get("outcomeTokenPrices");
-    return value!.toBigDecimalArray();
-  }
-
-  set outcomeTokenPrices(value: Array<BigDecimal>) {
-    this.set("outcomeTokenPrices", Value.fromBigDecimalArray(value));
-  }
-
-  get outcomeSlotCount(): i32 {
-    let value = this.get("outcomeSlotCount");
-    return value!.toI32();
-  }
-
-  set outcomeSlotCount(value: i32) {
-    this.set("outcomeSlotCount", Value.fromI32(value));
-  }
-
-  get lastActiveDay(): BigInt {
-    let value = this.get("lastActiveDay");
-    return value!.toBigInt();
-  }
-
-  set lastActiveDay(value: BigInt) {
-    this.set("lastActiveDay", Value.fromBigInt(value));
-  }
-
-  get totalSupply(): BigInt {
-    let value = this.get("totalSupply");
-    return value!.toBigInt();
-  }
-
-  set totalSupply(value: BigInt) {
-    this.set("totalSupply", Value.fromBigInt(value));
-  }
-
-  get poolMembers(): Array<string> | null {
-    let value = this.get("poolMembers");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set poolMembers(value: Array<string> | null) {
-    if (!value) {
-      this.unset("poolMembers");
-    } else {
-      this.set("poolMembers", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-}
-
 export class MarketPosition extends Entity {
   constructor(id: string) {
     super();
@@ -1994,6 +1663,7 @@ export class UserTourPlayerPnLTransaction extends Entity {
     this.set("tokens", Value.fromBigInt(BigInt.zero()));
     this.set("userPnl", Value.fromString(""));
     this.set("playerTokenPrice", Value.fromString(""));
+    this.set("season", Value.fromString(""));
   }
 
   save(): void {
@@ -2097,6 +1767,15 @@ export class UserTourPlayerPnLTransaction extends Entity {
 
   set playerTokenPrice(value: string) {
     this.set("playerTokenPrice", Value.fromString(value));
+  }
+
+  get season(): string {
+    let value = this.get("season");
+    return value!.toString();
+  }
+
+  set season(value: string) {
+    this.set("season", Value.fromString(value));
   }
 }
 
@@ -2274,5 +1953,397 @@ export class TradePrice extends Entity {
 
   set player(value: string) {
     this.set("player", Value.fromString(value));
+  }
+}
+
+export class Season extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Season entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Season entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Season", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Season | null {
+    return changetype<Season | null>(store.get("Season", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fpmm(): Array<string> {
+    let value = this.get("fpmm");
+    return value!.toStringArray();
+  }
+
+  set fpmm(value: Array<string>) {
+    this.set("fpmm", Value.fromStringArray(value));
+  }
+
+  get userDetails(): Array<string> {
+    let value = this.get("userDetails");
+    return value!.toStringArray();
+  }
+
+  set userDetails(value: Array<string>) {
+    this.set("userDetails", Value.fromStringArray(value));
+  }
+}
+
+export class FixedProductMarketMaker extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("creator", Value.fromBytes(Bytes.empty()));
+    this.set("creationTimestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("creationTransactionHash", Value.fromBytes(Bytes.empty()));
+    this.set("collateralToken", Value.fromString(""));
+    this.set("fee", Value.fromBigInt(BigInt.zero()));
+    this.set("tradesQuantity", Value.fromBigInt(BigInt.zero()));
+    this.set("buysQuantity", Value.fromBigInt(BigInt.zero()));
+    this.set("sellsQuantity", Value.fromBigInt(BigInt.zero()));
+    this.set("liquidityAddQuantity", Value.fromBigInt(BigInt.zero()));
+    this.set("liquidityRemoveQuantity", Value.fromBigInt(BigInt.zero()));
+    this.set("collateralVolume", Value.fromBigInt(BigInt.zero()));
+    this.set("scaledCollateralVolume", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("collateralBuyVolume", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "scaledCollateralBuyVolume",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("collateralSellVolume", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "scaledCollateralSellVolume",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("feeVolume", Value.fromBigInt(BigInt.zero()));
+    this.set("scaledFeeVolume", Value.fromBigDecimal(BigDecimal.zero()));
+    this.set("liquidityParameter", Value.fromBigInt(BigInt.zero()));
+    this.set(
+      "scaledLiquidityParameter",
+      Value.fromBigDecimal(BigDecimal.zero())
+    );
+    this.set("outcomeTokenAmounts", Value.fromBigIntArray(new Array(0)));
+    this.set("outcomeTokenPrices", Value.fromBigDecimalArray(new Array(0)));
+    this.set("lastActiveDay", Value.fromBigInt(BigInt.zero()));
+    this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
+    this.set("season", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save FixedProductMarketMaker entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save FixedProductMarketMaker entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("FixedProductMarketMaker", id.toString(), this);
+    }
+  }
+
+  static load(id: string): FixedProductMarketMaker | null {
+    return changetype<FixedProductMarketMaker | null>(
+      store.get("FixedProductMarketMaker", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get creator(): Bytes {
+    let value = this.get("creator");
+    return value!.toBytes();
+  }
+
+  set creator(value: Bytes) {
+    this.set("creator", Value.fromBytes(value));
+  }
+
+  get creationTimestamp(): BigInt {
+    let value = this.get("creationTimestamp");
+    return value!.toBigInt();
+  }
+
+  set creationTimestamp(value: BigInt) {
+    this.set("creationTimestamp", Value.fromBigInt(value));
+  }
+
+  get creationTransactionHash(): Bytes {
+    let value = this.get("creationTransactionHash");
+    return value!.toBytes();
+  }
+
+  set creationTransactionHash(value: Bytes) {
+    this.set("creationTransactionHash", Value.fromBytes(value));
+  }
+
+  get collateralToken(): string {
+    let value = this.get("collateralToken");
+    return value!.toString();
+  }
+
+  set collateralToken(value: string) {
+    this.set("collateralToken", Value.fromString(value));
+  }
+
+  get conditions(): Array<string> | null {
+    let value = this.get("conditions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set conditions(value: Array<string> | null) {
+    if (!value) {
+      this.unset("conditions");
+    } else {
+      this.set("conditions", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get fee(): BigInt {
+    let value = this.get("fee");
+    return value!.toBigInt();
+  }
+
+  set fee(value: BigInt) {
+    this.set("fee", Value.fromBigInt(value));
+  }
+
+  get tradesQuantity(): BigInt {
+    let value = this.get("tradesQuantity");
+    return value!.toBigInt();
+  }
+
+  set tradesQuantity(value: BigInt) {
+    this.set("tradesQuantity", Value.fromBigInt(value));
+  }
+
+  get buysQuantity(): BigInt {
+    let value = this.get("buysQuantity");
+    return value!.toBigInt();
+  }
+
+  set buysQuantity(value: BigInt) {
+    this.set("buysQuantity", Value.fromBigInt(value));
+  }
+
+  get sellsQuantity(): BigInt {
+    let value = this.get("sellsQuantity");
+    return value!.toBigInt();
+  }
+
+  set sellsQuantity(value: BigInt) {
+    this.set("sellsQuantity", Value.fromBigInt(value));
+  }
+
+  get liquidityAddQuantity(): BigInt {
+    let value = this.get("liquidityAddQuantity");
+    return value!.toBigInt();
+  }
+
+  set liquidityAddQuantity(value: BigInt) {
+    this.set("liquidityAddQuantity", Value.fromBigInt(value));
+  }
+
+  get liquidityRemoveQuantity(): BigInt {
+    let value = this.get("liquidityRemoveQuantity");
+    return value!.toBigInt();
+  }
+
+  set liquidityRemoveQuantity(value: BigInt) {
+    this.set("liquidityRemoveQuantity", Value.fromBigInt(value));
+  }
+
+  get collateralVolume(): BigInt {
+    let value = this.get("collateralVolume");
+    return value!.toBigInt();
+  }
+
+  set collateralVolume(value: BigInt) {
+    this.set("collateralVolume", Value.fromBigInt(value));
+  }
+
+  get scaledCollateralVolume(): BigDecimal {
+    let value = this.get("scaledCollateralVolume");
+    return value!.toBigDecimal();
+  }
+
+  set scaledCollateralVolume(value: BigDecimal) {
+    this.set("scaledCollateralVolume", Value.fromBigDecimal(value));
+  }
+
+  get collateralBuyVolume(): BigInt {
+    let value = this.get("collateralBuyVolume");
+    return value!.toBigInt();
+  }
+
+  set collateralBuyVolume(value: BigInt) {
+    this.set("collateralBuyVolume", Value.fromBigInt(value));
+  }
+
+  get scaledCollateralBuyVolume(): BigDecimal {
+    let value = this.get("scaledCollateralBuyVolume");
+    return value!.toBigDecimal();
+  }
+
+  set scaledCollateralBuyVolume(value: BigDecimal) {
+    this.set("scaledCollateralBuyVolume", Value.fromBigDecimal(value));
+  }
+
+  get collateralSellVolume(): BigInt {
+    let value = this.get("collateralSellVolume");
+    return value!.toBigInt();
+  }
+
+  set collateralSellVolume(value: BigInt) {
+    this.set("collateralSellVolume", Value.fromBigInt(value));
+  }
+
+  get scaledCollateralSellVolume(): BigDecimal {
+    let value = this.get("scaledCollateralSellVolume");
+    return value!.toBigDecimal();
+  }
+
+  set scaledCollateralSellVolume(value: BigDecimal) {
+    this.set("scaledCollateralSellVolume", Value.fromBigDecimal(value));
+  }
+
+  get feeVolume(): BigInt {
+    let value = this.get("feeVolume");
+    return value!.toBigInt();
+  }
+
+  set feeVolume(value: BigInt) {
+    this.set("feeVolume", Value.fromBigInt(value));
+  }
+
+  get scaledFeeVolume(): BigDecimal {
+    let value = this.get("scaledFeeVolume");
+    return value!.toBigDecimal();
+  }
+
+  set scaledFeeVolume(value: BigDecimal) {
+    this.set("scaledFeeVolume", Value.fromBigDecimal(value));
+  }
+
+  get liquidityParameter(): BigInt {
+    let value = this.get("liquidityParameter");
+    return value!.toBigInt();
+  }
+
+  set liquidityParameter(value: BigInt) {
+    this.set("liquidityParameter", Value.fromBigInt(value));
+  }
+
+  get scaledLiquidityParameter(): BigDecimal {
+    let value = this.get("scaledLiquidityParameter");
+    return value!.toBigDecimal();
+  }
+
+  set scaledLiquidityParameter(value: BigDecimal) {
+    this.set("scaledLiquidityParameter", Value.fromBigDecimal(value));
+  }
+
+  get outcomeTokenAmounts(): Array<BigInt> {
+    let value = this.get("outcomeTokenAmounts");
+    return value!.toBigIntArray();
+  }
+
+  set outcomeTokenAmounts(value: Array<BigInt>) {
+    this.set("outcomeTokenAmounts", Value.fromBigIntArray(value));
+  }
+
+  get outcomeTokenPrices(): Array<BigDecimal> {
+    let value = this.get("outcomeTokenPrices");
+    return value!.toBigDecimalArray();
+  }
+
+  set outcomeTokenPrices(value: Array<BigDecimal>) {
+    this.set("outcomeTokenPrices", Value.fromBigDecimalArray(value));
+  }
+
+  get outcomeSlotCount(): i32 {
+    let value = this.get("outcomeSlotCount");
+    return value!.toI32();
+  }
+
+  set outcomeSlotCount(value: i32) {
+    this.set("outcomeSlotCount", Value.fromI32(value));
+  }
+
+  get lastActiveDay(): BigInt {
+    let value = this.get("lastActiveDay");
+    return value!.toBigInt();
+  }
+
+  set lastActiveDay(value: BigInt) {
+    this.set("lastActiveDay", Value.fromBigInt(value));
+  }
+
+  get totalSupply(): BigInt {
+    let value = this.get("totalSupply");
+    return value!.toBigInt();
+  }
+
+  set totalSupply(value: BigInt) {
+    this.set("totalSupply", Value.fromBigInt(value));
+  }
+
+  get poolMembers(): Array<string> | null {
+    let value = this.get("poolMembers");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set poolMembers(value: Array<string> | null) {
+    if (!value) {
+      this.unset("poolMembers");
+    } else {
+      this.set("poolMembers", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get season(): string {
+    let value = this.get("season");
+    return value!.toString();
+  }
+
+  set season(value: string) {
+    this.set("season", Value.fromString(value));
   }
 }

@@ -177,6 +177,42 @@ export class ERC20Detailed extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  getBalanceOf(_user: Address): BigInt {
+    let result = super.call("getBalanceOf", "getBalanceOf(address):(uint256)", [
+      ethereum.Value.fromAddress(_user)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_getBalanceOf(_user: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getBalanceOf",
+      "getBalanceOf(address):(uint256)",
+      [ethereum.Value.fromAddress(_user)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getMyBalance(): BigInt {
+    let result = super.call("getMyBalance", "getMyBalance():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getMyBalance(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getMyBalance", "getMyBalance():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   increaseAllowance(spender: Address, addedValue: BigInt): boolean {
     let result = super.call(
       "increaseAllowance",
@@ -222,6 +258,29 @@ export class ERC20Detailed extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  realbalanceOf(param0: Address): BigInt {
+    let result = super.call(
+      "realbalanceOf",
+      "realbalanceOf(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_realbalanceOf(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "realbalanceOf",
+      "realbalanceOf(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   symbol(): string {
@@ -327,14 +386,6 @@ export class ConstructorCall__Inputs {
   constructor(call: ConstructorCall) {
     this._call = call;
   }
-
-  get name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
 }
 
 export class ConstructorCall__Outputs {
@@ -380,6 +431,104 @@ export class ApproveCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class BatchSetApprovalForAllCall extends ethereum.Call {
+  get inputs(): BatchSetApprovalForAllCall__Inputs {
+    return new BatchSetApprovalForAllCall__Inputs(this);
+  }
+
+  get outputs(): BatchSetApprovalForAllCall__Outputs {
+    return new BatchSetApprovalForAllCall__Outputs(this);
+  }
+}
+
+export class BatchSetApprovalForAllCall__Inputs {
+  _call: BatchSetApprovalForAllCall;
+
+  constructor(call: BatchSetApprovalForAllCall) {
+    this._call = call;
+  }
+
+  get addresses(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class BatchSetApprovalForAllCall__Outputs {
+  _call: BatchSetApprovalForAllCall;
+
+  constructor(call: BatchSetApprovalForAllCall) {
+    this._call = call;
+  }
+}
+
+export class BurnCall extends ethereum.Call {
+  get inputs(): BurnCall__Inputs {
+    return new BurnCall__Inputs(this);
+  }
+
+  get outputs(): BurnCall__Outputs {
+    return new BurnCall__Outputs(this);
+  }
+}
+
+export class BurnCall__Inputs {
+  _call: BurnCall;
+
+  constructor(call: BurnCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class BurnCall__Outputs {
+  _call: BurnCall;
+
+  constructor(call: BurnCall) {
+    this._call = call;
+  }
+}
+
+export class BurnFromCall extends ethereum.Call {
+  get inputs(): BurnFromCall__Inputs {
+    return new BurnFromCall__Inputs(this);
+  }
+
+  get outputs(): BurnFromCall__Outputs {
+    return new BurnFromCall__Outputs(this);
+  }
+}
+
+export class BurnFromCall__Inputs {
+  _call: BurnFromCall;
+
+  constructor(call: BurnFromCall) {
+    this._call = call;
+  }
+
+  get account(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class BurnFromCall__Outputs {
+  _call: BurnFromCall;
+
+  constructor(call: BurnFromCall) {
+    this._call = call;
   }
 }
 
@@ -456,6 +605,70 @@ export class IncreaseAllowanceCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class MintCall extends ethereum.Call {
+  get inputs(): MintCall__Inputs {
+    return new MintCall__Inputs(this);
+  }
+
+  get outputs(): MintCall__Outputs {
+    return new MintCall__Outputs(this);
+  }
+}
+
+export class MintCall__Inputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
+  }
+
+  get to(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class MintCall__Outputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
+  }
+}
+
+export class MintmeCall extends ethereum.Call {
+  get inputs(): MintmeCall__Inputs {
+    return new MintmeCall__Inputs(this);
+  }
+
+  get outputs(): MintmeCall__Outputs {
+    return new MintmeCall__Outputs(this);
+  }
+}
+
+export class MintmeCall__Inputs {
+  _call: MintmeCall;
+
+  constructor(call: MintmeCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class MintmeCall__Outputs {
+  _call: MintmeCall;
+
+  constructor(call: MintmeCall) {
+    this._call = call;
   }
 }
 
@@ -536,39 +749,5 @@ export class TransferFromCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
-  }
-}
-
-export class MintCall extends ethereum.Call {
-  get inputs(): MintCall__Inputs {
-    return new MintCall__Inputs(this);
-  }
-
-  get outputs(): MintCall__Outputs {
-    return new MintCall__Outputs(this);
-  }
-}
-
-export class MintCall__Inputs {
-  _call: MintCall;
-
-  constructor(call: MintCall) {
-    this._call = call;
-  }
-
-  get account(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class MintCall__Outputs {
-  _call: MintCall;
-
-  constructor(call: MintCall) {
-    this._call = call;
   }
 }
