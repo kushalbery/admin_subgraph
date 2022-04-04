@@ -95,7 +95,7 @@ chmod +x ./start.sh
 
   ```
     query getUserPnl {
-      userPnLs(where :{userId : "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"}, subgraphError:allow){
+      userPlayerHoldings(where :{userId : "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"}, subgraphError:allow){
         questionId
         tours{
           id
@@ -105,7 +105,7 @@ chmod +x ./start.sh
           fpmmId
           outcomeIndex
           tokens
-          playerTokenPrice{
+          player{
             currentLongTokenPrice
             currentShortTokenPrice
           }
@@ -127,3 +127,7 @@ chmod +x ./start.sh
 ```
 
 ```
+
+## To be reviewed
+
+- event Transfer in FPMM

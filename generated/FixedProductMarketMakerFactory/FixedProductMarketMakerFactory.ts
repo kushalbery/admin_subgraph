@@ -56,22 +56,18 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     );
   }
 
-  questionIdToFpmmAddress(param0: Bytes): Address {
-    let result = super.call(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
+  addresses(param0: BigInt): Address {
+    let result = super.call("addresses", "addresses(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
 
     return result[0].toAddress();
   }
 
-  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
+  try_addresses(param0: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall("addresses", "addresses(uint256):(address)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -143,6 +139,75 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getaddresslist(): Array<Address> {
+    let result = super.call(
+      "getaddresslist",
+      "getaddresslist():(address[])",
+      []
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getaddresslist(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getaddresslist",
+      "getaddresslist():(address[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  questionIdToFpmmAddress(param0: Bytes): Address {
+    let result = super.call(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "questionIdToFpmmAddress",
+      "questionIdToFpmmAddress(bytes32):(address)",
+      [ethereum.Value.fromFixedBytes(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  totalholdingvalueOnAllFpmms(): BigInt {
+    let result = super.call(
+      "totalholdingvalueOnAllFpmms",
+      "totalholdingvalueOnAllFpmms():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_totalholdingvalueOnAllFpmms(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "totalholdingvalueOnAllFpmms",
+      "totalholdingvalueOnAllFpmms():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 }
 

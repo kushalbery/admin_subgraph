@@ -1741,6 +1741,7 @@ export class Transaction extends Entity {
     this.set("user", Value.fromString(""));
     this.set("tradeAmount", Value.fromBigInt(BigInt.zero()));
     this.set("feeAmount", Value.fromBigInt(BigInt.zero()));
+    this.set("netTradeAmount", Value.fromBigInt(BigInt.zero()));
     this.set("outcomeIndex", Value.fromBigInt(BigInt.zero()));
     this.set("outcomeTokensAmount", Value.fromBigInt(BigInt.zero()));
   }
@@ -1823,6 +1824,15 @@ export class Transaction extends Entity {
 
   set feeAmount(value: BigInt) {
     this.set("feeAmount", Value.fromBigInt(value));
+  }
+
+  get netTradeAmount(): BigInt {
+    let value = this.get("netTradeAmount");
+    return value!.toBigInt();
+  }
+
+  set netTradeAmount(value: BigInt) {
+    this.set("netTradeAmount", Value.fromBigInt(value));
   }
 
   get outcomeIndex(): BigInt {
@@ -1910,7 +1920,7 @@ export class FpmmPoolMembership extends Entity {
   }
 }
 
-export class UserPnL extends Entity {
+export class UserPlayerHolding extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -1922,19 +1932,21 @@ export class UserPnL extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save UserPnL entity without an ID");
+    assert(id != null, "Cannot save UserPlayerHolding entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save UserPnL entity with non-string ID. " +
+        "Cannot save UserPlayerHolding entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("UserPnL", id.toString(), this);
+      store.set("UserPlayerHolding", id.toString(), this);
     }
   }
 
-  static load(id: string): UserPnL | null {
-    return changetype<UserPnL | null>(store.get("UserPnL", id));
+  static load(id: string): UserPlayerHolding | null {
+    return changetype<UserPlayerHolding | null>(
+      store.get("UserPlayerHolding", id)
+    );
   }
 
   get id(): string {
@@ -1991,7 +2003,7 @@ export class UserPnL extends Entity {
   }
 }
 
-export class UserTourPlayerPnLTransaction extends Entity {
+export class UserPlayerTourHolding extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -2002,29 +2014,29 @@ export class UserTourPlayerPnLTransaction extends Entity {
     this.set("outcomeIndex", Value.fromBigInt(BigInt.zero()));
     this.set("investmentAmount", Value.fromBigInt(BigInt.zero()));
     this.set("tokens", Value.fromBigInt(BigInt.zero()));
-    this.set("userPnl", Value.fromString(""));
-    this.set("playerTokenPrice", Value.fromString(""));
+    this.set("userPlayerHolding", Value.fromString(""));
+    this.set("player", Value.fromString(""));
   }
 
   save(): void {
     let id = this.get("id");
     assert(
       id != null,
-      "Cannot save UserTourPlayerPnLTransaction entity without an ID"
+      "Cannot save UserPlayerTourHolding entity without an ID"
     );
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        "Cannot save UserTourPlayerPnLTransaction entity with non-string ID. " +
+        "Cannot save UserPlayerTourHolding entity with non-string ID. " +
           'Considering using .toHex() to convert the "id" to a string.'
       );
-      store.set("UserTourPlayerPnLTransaction", id.toString(), this);
+      store.set("UserPlayerTourHolding", id.toString(), this);
     }
   }
 
-  static load(id: string): UserTourPlayerPnLTransaction | null {
-    return changetype<UserTourPlayerPnLTransaction | null>(
-      store.get("UserTourPlayerPnLTransaction", id)
+  static load(id: string): UserPlayerTourHolding | null {
+    return changetype<UserPlayerTourHolding | null>(
+      store.get("UserPlayerTourHolding", id)
     );
   }
 
@@ -2091,22 +2103,22 @@ export class UserTourPlayerPnLTransaction extends Entity {
     this.set("tokens", Value.fromBigInt(value));
   }
 
-  get userPnl(): string {
-    let value = this.get("userPnl");
+  get userPlayerHolding(): string {
+    let value = this.get("userPlayerHolding");
     return value!.toString();
   }
 
-  set userPnl(value: string) {
-    this.set("userPnl", Value.fromString(value));
+  set userPlayerHolding(value: string) {
+    this.set("userPlayerHolding", Value.fromString(value));
   }
 
-  get playerTokenPrice(): string {
-    let value = this.get("playerTokenPrice");
+  get player(): string {
+    let value = this.get("player");
     return value!.toString();
   }
 
-  set playerTokenPrice(value: string) {
-    this.set("playerTokenPrice", Value.fromString(value));
+  set player(value: string) {
+    this.set("player", Value.fromString(value));
   }
 }
 
