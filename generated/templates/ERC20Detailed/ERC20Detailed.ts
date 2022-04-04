@@ -396,6 +396,36 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class AddToTeamListCall extends ethereum.Call {
+  get inputs(): AddToTeamListCall__Inputs {
+    return new AddToTeamListCall__Inputs(this);
+  }
+
+  get outputs(): AddToTeamListCall__Outputs {
+    return new AddToTeamListCall__Outputs(this);
+  }
+}
+
+export class AddToTeamListCall__Inputs {
+  _call: AddToTeamListCall;
+
+  constructor(call: AddToTeamListCall) {
+    this._call = call;
+  }
+
+  get _address(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class AddToTeamListCall__Outputs {
+  _call: AddToTeamListCall;
+
+  constructor(call: AddToTeamListCall) {
+    this._call = call;
+  }
+}
+
 export class ApproveCall extends ethereum.Call {
   get inputs(): ApproveCall__Inputs {
     return new ApproveCall__Inputs(this);

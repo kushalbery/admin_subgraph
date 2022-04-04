@@ -659,6 +659,36 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class AddAddressCall extends ethereum.Call {
+  get inputs(): AddAddressCall__Inputs {
+    return new AddAddressCall__Inputs(this);
+  }
+
+  get outputs(): AddAddressCall__Outputs {
+    return new AddAddressCall__Outputs(this);
+  }
+}
+
+export class AddAddressCall__Inputs {
+  _call: AddAddressCall;
+
+  constructor(call: AddAddressCall) {
+    this._call = call;
+  }
+
+  get _address(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class AddAddressCall__Outputs {
+  _call: AddAddressCall;
+
+  constructor(call: AddAddressCall) {
+    this._call = call;
+  }
+}
+
 export class BatchSetApprovalForAllCall extends ethereum.Call {
   get inputs(): BatchSetApprovalForAllCall__Inputs {
     return new BatchSetApprovalForAllCall__Inputs(this);

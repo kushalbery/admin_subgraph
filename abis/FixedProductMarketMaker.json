@@ -115,6 +115,12 @@
         "internalType": "address",
         "name": "factoryAddress",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "netInvestmentAmount",
+        "type": "uint256"
       }
     ],
     "name": "FPMMBuy",
@@ -275,6 +281,12 @@
         "internalType": "address",
         "name": "factoryAddress",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "netReturnAmount",
+        "type": "uint256"
       }
     ],
     "name": "FPMMSell",
@@ -360,6 +372,19 @@
     ],
     "name": "TransferredOwner",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "HoldingValueTotalOnThisFpmm",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -532,6 +557,13 @@
   },
   {
     "inputs": [],
+    "name": "concludeSeason",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "decimals",
     "outputs": [
       {
@@ -690,6 +722,19 @@
   },
   {
     "inputs": [],
+    "name": "getLongHoldingValuetotal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getOwner",
     "outputs": [
       {
@@ -741,6 +786,32 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getShortHoldingValuetotal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getStatus",
+    "outputs": [
+      {
+        "internalType": "enum FixedProductMarketMaker.MarketStatus",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -955,6 +1026,20 @@
         "type": "bytes4"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pauseSeason",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "playSeason",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

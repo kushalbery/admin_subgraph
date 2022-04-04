@@ -80,6 +80,10 @@ export class FPMMBuy__Params {
   get factoryAddress(): Address {
     return this._event.parameters[7].value.toAddress();
   }
+
+  get netInvestmentAmount(): BigInt {
+    return this._event.parameters[8].value.toBigInt();
+  }
 }
 
 export class FPMMCreated extends ethereum.Event {
@@ -224,6 +228,10 @@ export class FPMMSell__Params {
   get factoryAddress(): Address {
     return this._event.parameters[7].value.toAddress();
   }
+
+  get netReturnAmount(): BigInt {
+    return this._event.parameters[8].value.toBigInt();
+  }
 }
 
 export class LongShortCurrentPrice extends ethereum.Event {
@@ -311,6 +319,29 @@ export class TransferredOwner__Params {
 export class FixedProductMarketMaker extends ethereum.SmartContract {
   static bind(address: Address): FixedProductMarketMaker {
     return new FixedProductMarketMaker("FixedProductMarketMaker", address);
+  }
+
+  HoldingValueTotalOnThisFpmm(): BigInt {
+    let result = super.call(
+      "HoldingValueTotalOnThisFpmm",
+      "HoldingValueTotalOnThisFpmm():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_HoldingValueTotalOnThisFpmm(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "HoldingValueTotalOnThisFpmm",
+      "HoldingValueTotalOnThisFpmm():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   allowance(owner: Address, spender: Address): BigInt {
@@ -657,6 +688,29 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  getLongHoldingValuetotal(): BigInt {
+    let result = super.call(
+      "getLongHoldingValuetotal",
+      "getLongHoldingValuetotal():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getLongHoldingValuetotal(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getLongHoldingValuetotal",
+      "getLongHoldingValuetotal():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   getOwner(): Address {
     let result = super.call("getOwner", "getOwner():(address)", []);
 
@@ -739,6 +793,44 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getShortHoldingValuetotal(): BigInt {
+    let result = super.call(
+      "getShortHoldingValuetotal",
+      "getShortHoldingValuetotal():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getShortHoldingValuetotal(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getShortHoldingValuetotal",
+      "getShortHoldingValuetotal():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getStatus(): i32 {
+    let result = super.call("getStatus", "getStatus():(uint8)", []);
+
+    return result[0].toI32();
+  }
+
+  try_getStatus(): ethereum.CallResult<i32> {
+    let result = super.tryCall("getStatus", "getStatus():(uint8)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   getlongPrices(): BigInt {
@@ -1416,6 +1508,32 @@ export class BuyCall__Outputs {
   }
 }
 
+export class ConcludeSeasonCall extends ethereum.Call {
+  get inputs(): ConcludeSeasonCall__Inputs {
+    return new ConcludeSeasonCall__Inputs(this);
+  }
+
+  get outputs(): ConcludeSeasonCall__Outputs {
+    return new ConcludeSeasonCall__Outputs(this);
+  }
+}
+
+export class ConcludeSeasonCall__Inputs {
+  _call: ConcludeSeasonCall;
+
+  constructor(call: ConcludeSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class ConcludeSeasonCall__Outputs {
+  _call: ConcludeSeasonCall;
+
+  constructor(call: ConcludeSeasonCall) {
+    this._call = call;
+  }
+}
+
 export class DecreaseAllowanceCall extends ethereum.Call {
   get inputs(): DecreaseAllowanceCall__Inputs {
     return new DecreaseAllowanceCall__Inputs(this);
@@ -1589,6 +1707,58 @@ export class OnERC1155ReceivedCall__Outputs {
 
   get value0(): Bytes {
     return this._call.outputValues[0].value.toBytes();
+  }
+}
+
+export class PauseSeasonCall extends ethereum.Call {
+  get inputs(): PauseSeasonCall__Inputs {
+    return new PauseSeasonCall__Inputs(this);
+  }
+
+  get outputs(): PauseSeasonCall__Outputs {
+    return new PauseSeasonCall__Outputs(this);
+  }
+}
+
+export class PauseSeasonCall__Inputs {
+  _call: PauseSeasonCall;
+
+  constructor(call: PauseSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PauseSeasonCall__Outputs {
+  _call: PauseSeasonCall;
+
+  constructor(call: PauseSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PlaySeasonCall extends ethereum.Call {
+  get inputs(): PlaySeasonCall__Inputs {
+    return new PlaySeasonCall__Inputs(this);
+  }
+
+  get outputs(): PlaySeasonCall__Outputs {
+    return new PlaySeasonCall__Outputs(this);
+  }
+}
+
+export class PlaySeasonCall__Inputs {
+  _call: PlaySeasonCall;
+
+  constructor(call: PlaySeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PlaySeasonCall__Outputs {
+  _call: PlaySeasonCall;
+
+  constructor(call: PlaySeasonCall) {
+    this._call = call;
   }
 }
 

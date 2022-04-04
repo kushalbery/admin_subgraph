@@ -186,6 +186,29 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
+
+  totalholdingvalueOnAllFpmms(): BigInt {
+    let result = super.call(
+      "totalholdingvalueOnAllFpmms",
+      "totalholdingvalueOnAllFpmms():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_totalholdingvalueOnAllFpmms(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "totalholdingvalueOnAllFpmms",
+      "totalholdingvalueOnAllFpmms():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
 }
 
 export class ConstructorCall extends ethereum.Call {
