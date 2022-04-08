@@ -12,6 +12,8 @@ import {
   Player,
   TradePrice,
   Account,
+  PlayerVolume,
+  PlayerVolumeByTransaction,
 } from "../generated/schema";
 import {
   FPMMFundingAdded,
@@ -122,6 +124,33 @@ function updateUserPlayerPnLTransaction(
     return;
   }
   log.error("Negative value found for sell transaction id : {} ", [id]);
+}
+
+function updatePlayerVolume(
+  timeStampNow: BigInt,
+  questionId: string,
+  totalVolumeTraded: BigInt,
+  tradeId: string
+): void {
+  let playerVolume = PlayerVolume.load(questionId);
+  if (playerVolume === null) {
+    let playerVolumeCount = new PlayerVolumeByTransaction(tradeId);
+    playerVolumeCount.volume = totalVolumeTraded;
+    playerVolumeCount.timestamp = timeStampNow;
+    playerVolumeCount.playerQuestionId = questionId;
+    playerVolumeCount.save();
+
+    let playerVolume = new PlayerVolume(questionId);
+    playerVolume.save();
+    return;
+  }
+
+  // add PlayerVolumeCount row
+  let playerVolumeCount = new PlayerVolumeByTransaction(tradeId);
+  playerVolumeCount.volume = totalVolumeTraded;
+  playerVolumeCount.timestamp = timeStampNow;
+  playerVolumeCount.playerQuestionId = questionId;
+  playerVolumeCount.save();
 }
 
 function updateInvestmentAmountOnBuy(
@@ -377,6 +406,12 @@ export function handleBuy(event: FPMMBuy): void {
     collateralScaleDec,
     event.block.timestamp
   );
+  updatePlayerVolume(
+    event.block.timestamp,
+    event.params.questionId.toHexString(),
+    event.params.totalTradeVolume,
+    event.transaction.hash.toHexString()
+  );
   markAccountAsSeen(event.params.buyer.toHexString(), event.block.timestamp);
   incrementAccountTrades(
     event.params.buyer.toHexString(),
@@ -389,7 +424,6 @@ export function handleBuy(event: FPMMBuy): void {
     .concat(event.address.toHexString())
     .concat("-")
     .concat(event.params.outcomeIndex.toString());
-
   updateUserPlayerPnLTransaction(
     pnlId,
     event.params.questionId.toHexString(),
@@ -476,6 +510,12 @@ export function handleSell(event: FPMMSell): void {
     event.params.returnAmount,
     collateralScaleDec,
     event.block.timestamp
+  );
+  updatePlayerVolume(
+    event.block.timestamp,
+    event.params.questionId.toHexString(),
+    event.params.totalTradeVolume,
+    event.transaction.hash.toHexString()
   );
   markAccountAsSeen(event.params.seller.toHexString(), event.block.timestamp);
   incrementAccountTrades(

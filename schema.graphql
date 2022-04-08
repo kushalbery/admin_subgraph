@@ -369,3 +369,17 @@ type TradePrice @entity {
   fpmm: FixedProductMarketMaker!
   player: Player!
 }
+
+type PlayerVolume @entity {
+  # id is questionId of player
+  id: ID!
+  volumeData: [PlayerVolumeByTransaction!]!
+    @derivedFrom(field: "playerQuestionId")
+}
+
+type PlayerVolumeByTransaction @entity {
+  id: ID!
+  volume: BigInt!
+  timestamp: BigInt!
+  playerQuestionId: PlayerVolume!
+}

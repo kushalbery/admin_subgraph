@@ -2286,3 +2286,114 @@ export class TradePrice extends Entity {
     this.set("player", Value.fromString(value));
   }
 }
+
+export class PlayerVolume extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save PlayerVolume entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save PlayerVolume entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("PlayerVolume", id.toString(), this);
+    }
+  }
+
+  static load(id: string): PlayerVolume | null {
+    return changetype<PlayerVolume | null>(store.get("PlayerVolume", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get volumeData(): Array<string> {
+    let value = this.get("volumeData");
+    return value!.toStringArray();
+  }
+
+  set volumeData(value: Array<string>) {
+    this.set("volumeData", Value.fromStringArray(value));
+  }
+}
+
+export class PlayerVolumeByTransaction extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("volume", Value.fromBigInt(BigInt.zero()));
+    this.set("timestamp", Value.fromBigInt(BigInt.zero()));
+    this.set("playerQuestionId", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(
+      id != null,
+      "Cannot save PlayerVolumeByTransaction entity without an ID"
+    );
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save PlayerVolumeByTransaction entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("PlayerVolumeByTransaction", id.toString(), this);
+    }
+  }
+
+  static load(id: string): PlayerVolumeByTransaction | null {
+    return changetype<PlayerVolumeByTransaction | null>(
+      store.get("PlayerVolumeByTransaction", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get volume(): BigInt {
+    let value = this.get("volume");
+    return value!.toBigInt();
+  }
+
+  set volume(value: BigInt) {
+    this.set("volume", Value.fromBigInt(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get playerQuestionId(): string {
+    let value = this.get("playerQuestionId");
+    return value!.toString();
+  }
+
+  set playerQuestionId(value: string) {
+    this.set("playerQuestionId", Value.fromString(value));
+  }
+}
