@@ -311,6 +311,8 @@ type Transaction @entity {
   tradeAmount: BigInt!
   "Amount of collateral paid in fees"
   feeAmount: BigInt!
+  "Net amount traded - excluding fee amount"
+  netTradeAmount: BigInt!
   "Index of outcome token being bought or sold"
   outcomeIndex: BigInt!
   "Amount of outcome tokens being bought or sold"
@@ -328,16 +330,16 @@ type FpmmPoolMembership @entity {
   amount: BigInt!
 }
 
-type UserPnL @entity {
+type UserPlayerHolding @entity {
   id: ID!
   userId: String!
   questionId: String!
   playerTokens: BigInt!
-  tours: [UserTourPlayerPnLTransaction!] @derivedFrom(field: "userPnl")
+  tours: [UserPlayerTourHolding!] @derivedFrom(field: "userPlayerHolding")
 }
 
-type UserTourPlayerPnLTransaction @entity {
-  "in userAddress-fpmmId-outcomeIndex form, ex : aaa-bbb-0"
+type UserPlayerTourHolding @entity {
+  "in userAddress-fpmmId-outcomeIndex form"
   id: ID!
   userId: String!
   questionId: String!
@@ -347,8 +349,8 @@ type UserTourPlayerPnLTransaction @entity {
   investmentAmount: BigInt!
   "net tokens remaining with user for corresponding questionId & outcomeIndex"
   tokens: BigInt!
-  userPnl: UserPnL!
-  playerTokenPrice: Player!
+  userPlayerHolding: UserPlayerHolding!
+  player: Player!
 }
 
 type Player @entity {

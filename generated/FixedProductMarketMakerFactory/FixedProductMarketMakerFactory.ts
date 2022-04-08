@@ -48,35 +48,34 @@ export class FixedProductMarketMakerCreation__Params {
   }
 }
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
   static bind(address: Address): FixedProductMarketMakerFactory {
     return new FixedProductMarketMakerFactory(
       "FixedProductMarketMakerFactory",
       address
     );
-  }
-
-  questionIdToFpmmAddress(param0: Bytes): Address {
-    let result = super.call(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_questionIdToFpmmAddress(param0: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "questionIdToFpmmAddress",
-      "questionIdToFpmmAddress(bytes32):(address)",
-      [ethereum.Value.fromFixedBytes(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   createFixedProductMarketMaker(
@@ -144,6 +143,86 @@ export class FixedProductMarketMakerFactory extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
+
+  getConditonalTokensAddress(): Address {
+    let result = super.call(
+      "getConditonalTokensAddress",
+      "getConditonalTokensAddress():(address)",
+      []
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_getConditonalTokensAddress(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "getConditonalTokensAddress",
+      "getConditonalTokensAddress():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getFpmmAddress(): Array<Address> {
+    let result = super.call(
+      "getFpmmAddress",
+      "getFpmmAddress():(address[])",
+      []
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getFpmmAddress(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getFpmmAddress",
+      "getFpmmAddress():(address[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  getTotalValue(): BigInt {
+    let result = super.call("getTotalValue", "getTotalValue():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getTotalValue(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getTotalValue",
+      "getTotalValue():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -163,16 +242,12 @@ export class ConstructorCall__Inputs {
     this._call = call;
   }
 
-  get _conditionalTokensAddr(): Address {
+  get _collateralTokenAddr(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get _collateralTokenAddr(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
   get _oracle(): Address {
-    return this._call.inputValues[2].value.toAddress();
+    return this._call.inputValues[1].value.toAddress();
   }
 }
 
@@ -227,5 +302,91 @@ export class CreateFixedProductMarketMakerCall__Outputs {
 
   get value0(): Address {
     return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class GetFpmmAddressCall extends ethereum.Call {
+  get inputs(): GetFpmmAddressCall__Inputs {
+    return new GetFpmmAddressCall__Inputs(this);
+  }
+
+  get outputs(): GetFpmmAddressCall__Outputs {
+    return new GetFpmmAddressCall__Outputs(this);
+  }
+}
+
+export class GetFpmmAddressCall__Inputs {
+  _call: GetFpmmAddressCall;
+
+  constructor(call: GetFpmmAddressCall) {
+    this._call = call;
+  }
+}
+
+export class GetFpmmAddressCall__Outputs {
+  _call: GetFpmmAddressCall;
+
+  constructor(call: GetFpmmAddressCall) {
+    this._call = call;
+  }
+
+  get value0(): Array<Address> {
+    return this._call.outputValues[0].value.toAddressArray();
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
+  }
+}
+
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
+    this._call = call;
   }
 }

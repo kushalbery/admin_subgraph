@@ -100,6 +100,28 @@ export class ConditionResolution__Params {
   }
 }
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class PayoutRedemption extends ethereum.Event {
   get params(): PayoutRedemption__Params {
     return new PayoutRedemption__Params(this);
@@ -370,6 +392,139 @@ export class ConditionalTokens extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
+  getCollectionId(
+    parentCollectionId: Bytes,
+    conditionId: Bytes,
+    indexSet: BigInt
+  ): Bytes {
+    let result = super.call(
+      "getCollectionId",
+      "getCollectionId(bytes32,bytes32,uint256):(bytes32)",
+      [
+        ethereum.Value.fromFixedBytes(parentCollectionId),
+        ethereum.Value.fromFixedBytes(conditionId),
+        ethereum.Value.fromUnsignedBigInt(indexSet)
+      ]
+    );
+
+    return result[0].toBytes();
+  }
+
+  try_getCollectionId(
+    parentCollectionId: Bytes,
+    conditionId: Bytes,
+    indexSet: BigInt
+  ): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "getCollectionId",
+      "getCollectionId(bytes32,bytes32,uint256):(bytes32)",
+      [
+        ethereum.Value.fromFixedBytes(parentCollectionId),
+        ethereum.Value.fromFixedBytes(conditionId),
+        ethereum.Value.fromUnsignedBigInt(indexSet)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  getConditionId(
+    oracle: Address,
+    questionId: Bytes,
+    outcomeSlotCount: BigInt
+  ): Bytes {
+    let result = super.call(
+      "getConditionId",
+      "getConditionId(address,bytes32,uint256):(bytes32)",
+      [
+        ethereum.Value.fromAddress(oracle),
+        ethereum.Value.fromFixedBytes(questionId),
+        ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)
+      ]
+    );
+
+    return result[0].toBytes();
+  }
+
+  try_getConditionId(
+    oracle: Address,
+    questionId: Bytes,
+    outcomeSlotCount: BigInt
+  ): ethereum.CallResult<Bytes> {
+    let result = super.tryCall(
+      "getConditionId",
+      "getConditionId(address,bytes32,uint256):(bytes32)",
+      [
+        ethereum.Value.fromAddress(oracle),
+        ethereum.Value.fromFixedBytes(questionId),
+        ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
+  }
+
+  getOutcomeSlotCount(conditionId: Bytes): BigInt {
+    let result = super.call(
+      "getOutcomeSlotCount",
+      "getOutcomeSlotCount(bytes32):(uint256)",
+      [ethereum.Value.fromFixedBytes(conditionId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getOutcomeSlotCount(conditionId: Bytes): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getOutcomeSlotCount",
+      "getOutcomeSlotCount(bytes32):(uint256)",
+      [ethereum.Value.fromFixedBytes(conditionId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getPositionId(collateralToken: Address, collectionId: Bytes): BigInt {
+    let result = super.call(
+      "getPositionId",
+      "getPositionId(address,bytes32):(uint256)",
+      [
+        ethereum.Value.fromAddress(collateralToken),
+        ethereum.Value.fromFixedBytes(collectionId)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getPositionId(
+    collateralToken: Address,
+    collectionId: Bytes
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getPositionId",
+      "getPositionId(address,bytes32):(uint256)",
+      [
+        ethereum.Value.fromAddress(collateralToken),
+        ethereum.Value.fromFixedBytes(collectionId)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   isApprovedForAll(account: Address, operator: Address): boolean {
     let result = super.call(
       "isApprovedForAll",
@@ -400,6 +555,21 @@ export class ConditionalTokens extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   payoutDenominator(param0: Bytes): BigInt {
@@ -498,139 +668,6 @@ export class ConditionalTokens extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toString());
   }
-
-  getOutcomeSlotCount(conditionId: Bytes): BigInt {
-    let result = super.call(
-      "getOutcomeSlotCount",
-      "getOutcomeSlotCount(bytes32):(uint256)",
-      [ethereum.Value.fromFixedBytes(conditionId)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_getOutcomeSlotCount(conditionId: Bytes): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getOutcomeSlotCount",
-      "getOutcomeSlotCount(bytes32):(uint256)",
-      [ethereum.Value.fromFixedBytes(conditionId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getConditionId(
-    oracle: Address,
-    questionId: Bytes,
-    outcomeSlotCount: BigInt
-  ): Bytes {
-    let result = super.call(
-      "getConditionId",
-      "getConditionId(address,bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromAddress(oracle),
-        ethereum.Value.fromFixedBytes(questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)
-      ]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_getConditionId(
-    oracle: Address,
-    questionId: Bytes,
-    outcomeSlotCount: BigInt
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "getConditionId",
-      "getConditionId(address,bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromAddress(oracle),
-        ethereum.Value.fromFixedBytes(questionId),
-        ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  getCollectionId(
-    parentCollectionId: Bytes,
-    conditionId: Bytes,
-    indexSet: BigInt
-  ): Bytes {
-    let result = super.call(
-      "getCollectionId",
-      "getCollectionId(bytes32,bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(parentCollectionId),
-        ethereum.Value.fromFixedBytes(conditionId),
-        ethereum.Value.fromUnsignedBigInt(indexSet)
-      ]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_getCollectionId(
-    parentCollectionId: Bytes,
-    conditionId: Bytes,
-    indexSet: BigInt
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "getCollectionId",
-      "getCollectionId(bytes32,bytes32,uint256):(bytes32)",
-      [
-        ethereum.Value.fromFixedBytes(parentCollectionId),
-        ethereum.Value.fromFixedBytes(conditionId),
-        ethereum.Value.fromUnsignedBigInt(indexSet)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  getPositionId(collateralToken: Address, collectionId: Bytes): BigInt {
-    let result = super.call(
-      "getPositionId",
-      "getPositionId(address,bytes32):(uint256)",
-      [
-        ethereum.Value.fromAddress(collateralToken),
-        ethereum.Value.fromFixedBytes(collectionId)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_getPositionId(
-    collateralToken: Address,
-    collectionId: Bytes
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getPositionId",
-      "getPositionId(address,bytes32):(uint256)",
-      [
-        ethereum.Value.fromAddress(collateralToken),
-        ethereum.Value.fromFixedBytes(collectionId)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -655,6 +692,226 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class BatchSetApprovalForAllCall extends ethereum.Call {
+  get inputs(): BatchSetApprovalForAllCall__Inputs {
+    return new BatchSetApprovalForAllCall__Inputs(this);
+  }
+
+  get outputs(): BatchSetApprovalForAllCall__Outputs {
+    return new BatchSetApprovalForAllCall__Outputs(this);
+  }
+}
+
+export class BatchSetApprovalForAllCall__Inputs {
+  _call: BatchSetApprovalForAllCall;
+
+  constructor(call: BatchSetApprovalForAllCall) {
+    this._call = call;
+  }
+
+  get addresses(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
+  }
+
+  get approval(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class BatchSetApprovalForAllCall__Outputs {
+  _call: BatchSetApprovalForAllCall;
+
+  constructor(call: BatchSetApprovalForAllCall) {
+    this._call = call;
+  }
+}
+
+export class MergePositionsCall extends ethereum.Call {
+  get inputs(): MergePositionsCall__Inputs {
+    return new MergePositionsCall__Inputs(this);
+  }
+
+  get outputs(): MergePositionsCall__Outputs {
+    return new MergePositionsCall__Outputs(this);
+  }
+}
+
+export class MergePositionsCall__Inputs {
+  _call: MergePositionsCall;
+
+  constructor(call: MergePositionsCall) {
+    this._call = call;
+  }
+
+  get collateralToken(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get parentCollectionId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get conditionId(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
+
+  get partition(): Array<BigInt> {
+    return this._call.inputValues[3].value.toBigIntArray();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+}
+
+export class MergePositionsCall__Outputs {
+  _call: MergePositionsCall;
+
+  constructor(call: MergePositionsCall) {
+    this._call = call;
+  }
+}
+
+export class PrepareConditionCall extends ethereum.Call {
+  get inputs(): PrepareConditionCall__Inputs {
+    return new PrepareConditionCall__Inputs(this);
+  }
+
+  get outputs(): PrepareConditionCall__Outputs {
+    return new PrepareConditionCall__Outputs(this);
+  }
+}
+
+export class PrepareConditionCall__Inputs {
+  _call: PrepareConditionCall;
+
+  constructor(call: PrepareConditionCall) {
+    this._call = call;
+  }
+
+  get oracle(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get questionId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get outcomeSlotCount(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class PrepareConditionCall__Outputs {
+  _call: PrepareConditionCall;
+
+  constructor(call: PrepareConditionCall) {
+    this._call = call;
+  }
+}
+
+export class RedeemPositionsCall extends ethereum.Call {
+  get inputs(): RedeemPositionsCall__Inputs {
+    return new RedeemPositionsCall__Inputs(this);
+  }
+
+  get outputs(): RedeemPositionsCall__Outputs {
+    return new RedeemPositionsCall__Outputs(this);
+  }
+}
+
+export class RedeemPositionsCall__Inputs {
+  _call: RedeemPositionsCall;
+
+  constructor(call: RedeemPositionsCall) {
+    this._call = call;
+  }
+
+  get collateralToken(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get parentCollectionId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get conditionId(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
+
+  get indexSets(): Array<BigInt> {
+    return this._call.inputValues[3].value.toBigIntArray();
+  }
+}
+
+export class RedeemPositionsCall__Outputs {
+  _call: RedeemPositionsCall;
+
+  constructor(call: RedeemPositionsCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class ReportPayoutsCall extends ethereum.Call {
+  get inputs(): ReportPayoutsCall__Inputs {
+    return new ReportPayoutsCall__Inputs(this);
+  }
+
+  get outputs(): ReportPayoutsCall__Outputs {
+    return new ReportPayoutsCall__Outputs(this);
+  }
+}
+
+export class ReportPayoutsCall__Inputs {
+  _call: ReportPayoutsCall;
+
+  constructor(call: ReportPayoutsCall) {
+    this._call = call;
+  }
+
+  get questionId(): Bytes {
+    return this._call.inputValues[0].value.toBytes();
+  }
+
+  get payouts(): Array<BigInt> {
+    return this._call.inputValues[1].value.toBigIntArray();
+  }
+}
+
+export class ReportPayoutsCall__Outputs {
+  _call: ReportPayoutsCall;
+
+  constructor(call: ReportPayoutsCall) {
     this._call = call;
   }
 }
@@ -785,78 +1042,6 @@ export class SetApprovalForAllCall__Outputs {
   }
 }
 
-export class PrepareConditionCall extends ethereum.Call {
-  get inputs(): PrepareConditionCall__Inputs {
-    return new PrepareConditionCall__Inputs(this);
-  }
-
-  get outputs(): PrepareConditionCall__Outputs {
-    return new PrepareConditionCall__Outputs(this);
-  }
-}
-
-export class PrepareConditionCall__Inputs {
-  _call: PrepareConditionCall;
-
-  constructor(call: PrepareConditionCall) {
-    this._call = call;
-  }
-
-  get oracle(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get questionId(): Bytes {
-    return this._call.inputValues[1].value.toBytes();
-  }
-
-  get outcomeSlotCount(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-}
-
-export class PrepareConditionCall__Outputs {
-  _call: PrepareConditionCall;
-
-  constructor(call: PrepareConditionCall) {
-    this._call = call;
-  }
-}
-
-export class ReportPayoutsCall extends ethereum.Call {
-  get inputs(): ReportPayoutsCall__Inputs {
-    return new ReportPayoutsCall__Inputs(this);
-  }
-
-  get outputs(): ReportPayoutsCall__Outputs {
-    return new ReportPayoutsCall__Outputs(this);
-  }
-}
-
-export class ReportPayoutsCall__Inputs {
-  _call: ReportPayoutsCall;
-
-  constructor(call: ReportPayoutsCall) {
-    this._call = call;
-  }
-
-  get questionId(): Bytes {
-    return this._call.inputValues[0].value.toBytes();
-  }
-
-  get payouts(): Array<BigInt> {
-    return this._call.inputValues[1].value.toBigIntArray();
-  }
-}
-
-export class ReportPayoutsCall__Outputs {
-  _call: ReportPayoutsCall;
-
-  constructor(call: ReportPayoutsCall) {
-    this._call = call;
-  }
-}
-
 export class SplitPositionCall extends ethereum.Call {
   get inputs(): SplitPositionCall__Inputs {
     return new SplitPositionCall__Inputs(this);
@@ -903,90 +1088,32 @@ export class SplitPositionCall__Outputs {
   }
 }
 
-export class MergePositionsCall extends ethereum.Call {
-  get inputs(): MergePositionsCall__Inputs {
-    return new MergePositionsCall__Inputs(this);
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
   }
 
-  get outputs(): MergePositionsCall__Outputs {
-    return new MergePositionsCall__Outputs(this);
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
-export class MergePositionsCall__Inputs {
-  _call: MergePositionsCall;
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: MergePositionsCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 
-  get collateralToken(): Address {
+  get newOwner(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
-
-  get parentCollectionId(): Bytes {
-    return this._call.inputValues[1].value.toBytes();
-  }
-
-  get conditionId(): Bytes {
-    return this._call.inputValues[2].value.toBytes();
-  }
-
-  get partition(): Array<BigInt> {
-    return this._call.inputValues[3].value.toBigIntArray();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
 }
 
-export class MergePositionsCall__Outputs {
-  _call: MergePositionsCall;
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: MergePositionsCall) {
-    this._call = call;
-  }
-}
-
-export class RedeemPositionsCall extends ethereum.Call {
-  get inputs(): RedeemPositionsCall__Inputs {
-    return new RedeemPositionsCall__Inputs(this);
-  }
-
-  get outputs(): RedeemPositionsCall__Outputs {
-    return new RedeemPositionsCall__Outputs(this);
-  }
-}
-
-export class RedeemPositionsCall__Inputs {
-  _call: RedeemPositionsCall;
-
-  constructor(call: RedeemPositionsCall) {
-    this._call = call;
-  }
-
-  get collateralToken(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get parentCollectionId(): Bytes {
-    return this._call.inputValues[1].value.toBytes();
-  }
-
-  get conditionId(): Bytes {
-    return this._call.inputValues[2].value.toBytes();
-  }
-
-  get indexSets(): Array<BigInt> {
-    return this._call.inputValues[3].value.toBigIntArray();
-  }
-}
-
-export class RedeemPositionsCall__Outputs {
-  _call: RedeemPositionsCall;
-
-  constructor(call: RedeemPositionsCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

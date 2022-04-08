@@ -76,6 +76,18 @@ export class FPMMBuy__Params {
   get totalTradeVolume(): BigInt {
     return this._event.parameters[6].value.toBigInt();
   }
+
+  get factoryAddress(): Address {
+    return this._event.parameters[7].value.toAddress();
+  }
+
+  get netInvestmentAmount(): BigInt {
+    return this._event.parameters[8].value.toBigInt();
+  }
+
+  get totalLiquidity(): BigInt {
+    return this._event.parameters[9].value.toBigInt();
+  }
 }
 
 export class FPMMCreated extends ethereum.Event {
@@ -216,6 +228,18 @@ export class FPMMSell__Params {
   get totalTradeVolume(): BigInt {
     return this._event.parameters[6].value.toBigInt();
   }
+
+  get factoryAddress(): Address {
+    return this._event.parameters[7].value.toAddress();
+  }
+
+  get netReturnAmount(): BigInt {
+    return this._event.parameters[8].value.toBigInt();
+  }
+
+  get totalLiquidity(): BigInt {
+    return this._event.parameters[9].value.toBigInt();
+  }
 }
 
 export class LongShortCurrentPrice extends ethereum.Event {
@@ -252,6 +276,28 @@ export class LongShortCurrentPrice__Params {
   }
 }
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -278,31 +324,32 @@ export class Transfer__Params {
   }
 }
 
-export class TransferredOwner extends ethereum.Event {
-  get params(): TransferredOwner__Params {
-    return new TransferredOwner__Params(this);
-  }
-}
-
-export class TransferredOwner__Params {
-  _event: TransferredOwner;
-
-  constructor(event: TransferredOwner) {
-    this._event = event;
-  }
-
-  get owner(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get previousOwner(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
 export class FixedProductMarketMaker extends ethereum.SmartContract {
   static bind(address: Address): FixedProductMarketMaker {
     return new FixedProductMarketMaker("FixedProductMarketMaker", address);
+  }
+
+  TotalFpmmHoldingValue(): BigInt {
+    let result = super.call(
+      "TotalFpmmHoldingValue",
+      "TotalFpmmHoldingValue():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_TotalFpmmHoldingValue(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "TotalFpmmHoldingValue",
+      "TotalFpmmHoldingValue():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   allowance(owner: Address, spender: Address): BigInt {
@@ -498,6 +545,25 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  factoryAddress(): Address {
+    let result = super.call("factoryAddress", "factoryAddress():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_factoryAddress(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "factoryAddress",
+      "factoryAddress():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   feesWithdrawableBy(account: Address): BigInt {
     let result = super.call(
       "feesWithdrawableBy",
@@ -521,23 +587,21 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  generateBasicPartition(outcomeSlotCount: BigInt): Array<BigInt> {
+  generateBasicPartition(): Array<BigInt> {
     let result = super.call(
       "generateBasicPartition",
-      "generateBasicPartition(uint256):(uint256[])",
-      [ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)]
+      "generateBasicPartition():(uint256[])",
+      []
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_generateBasicPartition(
-    outcomeSlotCount: BigInt
-  ): ethereum.CallResult<Array<BigInt>> {
+  try_generateBasicPartition(): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
       "generateBasicPartition",
-      "generateBasicPartition(uint256):(uint256[])",
-      [ethereum.Value.fromUnsignedBigInt(outcomeSlotCount)]
+      "generateBasicPartition():(uint256[])",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -584,21 +648,21 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getHoldingValues(_user: Address): Array<BigInt> {
+  getHoldingValues(account: Address): Array<BigInt> {
     let result = super.call(
       "getHoldingValues",
       "getHoldingValues(address):(uint256[])",
-      [ethereum.Value.fromAddress(_user)]
+      [ethereum.Value.fromAddress(account)]
     );
 
     return result[0].toBigIntArray();
   }
 
-  try_getHoldingValues(_user: Address): ethereum.CallResult<Array<BigInt>> {
+  try_getHoldingValues(account: Address): ethereum.CallResult<Array<BigInt>> {
     let result = super.tryCall(
       "getHoldingValues",
       "getHoldingValues(address):(uint256[])",
-      [ethereum.Value.fromAddress(_user)]
+      [ethereum.Value.fromAddress(account)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -630,19 +694,42 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getOwner(): Address {
-    let result = super.call("getOwner", "getOwner():(address)", []);
+  getLongHoldingValuetotal(): BigInt {
+    let result = super.call(
+      "getLongHoldingValuetotal",
+      "getLongHoldingValuetotal():(uint256)",
+      []
+    );
 
-    return result[0].toAddress();
+    return result[0].toBigInt();
   }
 
-  try_getOwner(): ethereum.CallResult<Address> {
-    let result = super.tryCall("getOwner", "getOwner():(address)", []);
+  try_getLongHoldingValuetotal(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getLongHoldingValuetotal",
+      "getLongHoldingValuetotal():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getLongPrice(): BigInt {
+    let result = super.call("getLongPrice", "getLongPrice():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getLongPrice(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getLongPrice", "getLongPrice():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   getPoolBalances(): Array<BigInt> {
@@ -714,16 +801,77 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getlongPrices(): BigInt {
-    let result = super.call("getlongPrices", "getlongPrices():(uint256)", []);
+  getShortHoldingValuetotal(): BigInt {
+    let result = super.call(
+      "getShortHoldingValuetotal",
+      "getShortHoldingValuetotal():(uint256)",
+      []
+    );
 
     return result[0].toBigInt();
   }
 
-  try_getlongPrices(): ethereum.CallResult<BigInt> {
+  try_getShortHoldingValuetotal(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getlongPrices",
-      "getlongPrices():(uint256)",
+      "getShortHoldingValuetotal",
+      "getShortHoldingValuetotal():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getShortPrice(): BigInt {
+    let result = super.call("getShortPrice", "getShortPrice():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getShortPrice(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getShortPrice",
+      "getShortPrice():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getStatus(): i32 {
+    let result = super.call("getStatus", "getStatus():(uint8)", []);
+
+    return result[0].toI32();
+  }
+
+  try_getStatus(): ethereum.CallResult<i32> {
+    let result = super.tryCall("getStatus", "getStatus():(uint8)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  getTotalValueLocked(): BigInt {
+    let result = super.call(
+      "getTotalValueLocked",
+      "getTotalValueLocked():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getTotalValueLocked(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getTotalValueLocked",
+      "getTotalValueLocked():(uint256)",
       []
     );
     if (result.reverted) {
@@ -747,25 +895,6 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     let result = super.tryCall(
       "getlongtradevolume",
       "getlongtradevolume():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getshortPrices(): BigInt {
-    let result = super.call("getshortPrices", "getshortPrices():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_getshortPrices(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getshortPrices",
-      "getshortPrices():(uint256)",
       []
     );
     if (result.reverted) {
@@ -853,39 +982,20 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  isOwner(sender: Address): boolean {
-    let result = super.call("isOwner", "isOwner(address):(bool)", [
-      ethereum.Value.fromAddress(sender)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_isOwner(sender: Address): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isOwner", "isOwner(address):(bool)", [
-      ethereum.Value.fromAddress(sender)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  longtradevolume(): BigInt {
+  longTradeVolume(): BigInt {
     let result = super.call(
-      "longtradevolume",
-      "longtradevolume():(uint256)",
+      "longTradeVolume",
+      "longTradeVolume():(uint256)",
       []
     );
 
     return result[0].toBigInt();
   }
 
-  try_longtradevolume(): ethereum.CallResult<BigInt> {
+  try_longTradeVolume(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "longtradevolume",
-      "longtradevolume():(uint256)",
+      "longTradeVolume",
+      "longTradeVolume():(uint256)",
       []
     );
     if (result.reverted) {
@@ -1004,20 +1114,35 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  shorttradevolume(): BigInt {
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  shortTradeVolume(): BigInt {
     let result = super.call(
-      "shorttradevolume",
-      "shorttradevolume():(uint256)",
+      "shortTradeVolume",
+      "shortTradeVolume():(uint256)",
       []
     );
 
     return result[0].toBigInt();
   }
 
-  try_shorttradevolume(): ethereum.CallResult<BigInt> {
+  try_shortTradeVolume(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "shorttradevolume",
-      "shorttradevolume():(uint256)",
+      "shortTradeVolume",
+      "shortTradeVolume():(uint256)",
       []
     );
     if (result.reverted) {
@@ -1111,6 +1236,25 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  totalLiquidity(): BigInt {
+    let result = super.call("totalLiquidity", "totalLiquidity():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_totalLiquidity(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "totalLiquidity",
+      "totalLiquidity():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   totalSupply(): BigInt {
     let result = super.call("totalSupply", "totalSupply():(uint256)", []);
 
@@ -1141,25 +1285,6 @@ export class FixedProductMarketMaker extends ethereum.SmartContract {
       "totalholdingvalue",
       "totalholdingvalue(address):(uint256)",
       [ethereum.Value.fromAddress(_user)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  totalliquidity(): BigInt {
-    let result = super.call("totalliquidity", "totalliquidity():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_totalliquidity(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "totalliquidity",
-      "totalliquidity():(uint256)",
-      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1389,6 +1514,32 @@ export class BuyCall__Outputs {
   }
 }
 
+export class ConcludeSeasonCall extends ethereum.Call {
+  get inputs(): ConcludeSeasonCall__Inputs {
+    return new ConcludeSeasonCall__Inputs(this);
+  }
+
+  get outputs(): ConcludeSeasonCall__Outputs {
+    return new ConcludeSeasonCall__Outputs(this);
+  }
+}
+
+export class ConcludeSeasonCall__Inputs {
+  _call: ConcludeSeasonCall;
+
+  constructor(call: ConcludeSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class ConcludeSeasonCall__Outputs {
+  _call: ConcludeSeasonCall;
+
+  constructor(call: ConcludeSeasonCall) {
+    this._call = call;
+  }
+}
+
 export class DecreaseAllowanceCall extends ethereum.Call {
   get inputs(): DecreaseAllowanceCall__Inputs {
     return new DecreaseAllowanceCall__Inputs(this);
@@ -1565,6 +1716,58 @@ export class OnERC1155ReceivedCall__Outputs {
   }
 }
 
+export class PauseSeasonCall extends ethereum.Call {
+  get inputs(): PauseSeasonCall__Inputs {
+    return new PauseSeasonCall__Inputs(this);
+  }
+
+  get outputs(): PauseSeasonCall__Outputs {
+    return new PauseSeasonCall__Outputs(this);
+  }
+}
+
+export class PauseSeasonCall__Inputs {
+  _call: PauseSeasonCall;
+
+  constructor(call: PauseSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PauseSeasonCall__Outputs {
+  _call: PauseSeasonCall;
+
+  constructor(call: PauseSeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PlaySeasonCall extends ethereum.Call {
+  get inputs(): PlaySeasonCall__Inputs {
+    return new PlaySeasonCall__Inputs(this);
+  }
+
+  get outputs(): PlaySeasonCall__Outputs {
+    return new PlaySeasonCall__Outputs(this);
+  }
+}
+
+export class PlaySeasonCall__Inputs {
+  _call: PlaySeasonCall;
+
+  constructor(call: PlaySeasonCall) {
+    this._call = call;
+  }
+}
+
+export class PlaySeasonCall__Outputs {
+  _call: PlaySeasonCall;
+
+  constructor(call: PlaySeasonCall) {
+    this._call = call;
+  }
+}
+
 export class RemoveFundingCall extends ethereum.Call {
   get inputs(): RemoveFundingCall__Inputs {
     return new RemoveFundingCall__Inputs(this);
@@ -1591,6 +1794,32 @@ export class RemoveFundingCall__Outputs {
   _call: RemoveFundingCall;
 
   constructor(call: RemoveFundingCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
     this._call = call;
   }
 }
@@ -1743,20 +1972,20 @@ export class TransferFromCall__Outputs {
   }
 }
 
-export class TransferOwnerCall extends ethereum.Call {
-  get inputs(): TransferOwnerCall__Inputs {
-    return new TransferOwnerCall__Inputs(this);
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
   }
 
-  get outputs(): TransferOwnerCall__Outputs {
-    return new TransferOwnerCall__Outputs(this);
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
-export class TransferOwnerCall__Inputs {
-  _call: TransferOwnerCall;
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: TransferOwnerCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 
@@ -1765,10 +1994,10 @@ export class TransferOwnerCall__Inputs {
   }
 }
 
-export class TransferOwnerCall__Outputs {
-  _call: TransferOwnerCall;
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: TransferOwnerCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

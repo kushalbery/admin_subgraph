@@ -7,11 +7,8 @@ import {
   Transaction,
   CreatedFPMM,
   Condition,
-  UserTourPlayerPnLTransaction,
-  UserPnL,
   Player,
   TradePrice,
-  Account,
   PlayerVolume,
   PlayerVolumeByTransaction,
 } from "../generated/schema";
@@ -53,77 +50,24 @@ import {
   requireAccount,
   updateUserVolume,
 } from "./utils/account-utils";
+import {
+  updateUserPlayerTourHoldings,
+  updateInvestmentAmountOnBuy,
+  updateInvestmentAmountOnSell,
+} from "./utils/userHoldings-util";
 
-function updateUserPlayerPnLTransaction(
-  id: string,
-  questionId: string,
-  userId: string,
-  tradeAmount: BigInt,
-  tokensTraded: BigInt,
-  txnType: string,
-  fpmmId: string,
-  outcomeIndex: BigInt
-): void {
-  let userPlayerPnLTransaction = UserTourPlayerPnLTransaction.load(id);
-  if (userPlayerPnLTransaction == null) {
-    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
-    if (userPnlObj == null) {
-      let userPnlObj = new UserPnL(userId + "-" + fpmmId);
-      userPnlObj.userId = userId;
-      userPnlObj.questionId = questionId;
-      userPnlObj.playerTokens = tokensTraded;
-      userPnlObj.save();
-    } else {
-      userPnlObj.playerTokens = userPnlObj.playerTokens.plus(tokensTraded);
-      userPnlObj.save();
-    }
-
-    let newPnLTourTxn = new UserTourPlayerPnLTransaction(id);
-    newPnLTourTxn.questionId = questionId;
-    newPnLTourTxn.userId = userId;
-    newPnLTourTxn.investmentAmount = tradeAmount;
-    newPnLTourTxn.tokens = tokensTraded;
-    newPnLTourTxn.userPnl = userId + "-" + fpmmId;
-    newPnLTourTxn.fpmmId = fpmmId;
-    newPnLTourTxn.outcomeIndex = outcomeIndex;
-    newPnLTourTxn.playerTokenPrice = fpmmId;
-    newPnLTourTxn.save();
-
-    return;
-  }
-  if (txnType === "Buy") {
-    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
-    if (userPnlObj != null) {
-      userPnlObj.playerTokens = userPnlObj.playerTokens.plus(tokensTraded);
-      userPnlObj.save();
-    }
-
-    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.tokens.plus(
-      tokensTraded
-    );
-    userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.plus(
-      tradeAmount
-    );
-    userPlayerPnLTransaction.save();
-    return;
-  }
-  if (userPlayerPnLTransaction.tokens.minus(tokensTraded) > new BigInt(0)) {
-    let userPnlObj = UserPnL.load(userId + "-" + fpmmId);
-    if (userPnlObj != null) {
-      userPnlObj.playerTokens = userPnlObj.playerTokens.minus(tokensTraded);
-      userPnlObj.save();
-    }
-
-    userPlayerPnLTransaction.investmentAmount = userPlayerPnLTransaction.investmentAmount.minus(
-      tradeAmount
-    );
-    userPlayerPnLTransaction.tokens = userPlayerPnLTransaction.tokens.minus(
-      tokensTraded
-    );
-    userPlayerPnLTransaction.save();
-    return;
-  }
-  log.error("Negative value found for sell transaction id : {} ", [id]);
+function recordBuy(event: FPMMBuy, netTradeAmount: BigInt): void {
+  let buy = new Transaction(event.transaction.hash.toHexString());
+  buy.type = TRADE_TYPE_BUY;
+  buy.timestamp = event.block.timestamp;
+  buy.market = event.address.toHexString();
+  buy.user = event.params.buyer.toHexString();
+  buy.tradeAmount = event.params.investmentAmount;
+  buy.feeAmount = event.params.feeAmount;
+  buy.netTradeAmount = netTradeAmount;
+  buy.outcomeIndex = event.params.outcomeIndex;
+  buy.outcomeTokensAmount = event.params.outcomeTokensBought;
+  buy.save();
 }
 
 function updatePlayerVolume(
@@ -144,63 +88,9 @@ function updatePlayerVolume(
     playerVolume.save();
     return;
   }
-
-  // add PlayerVolumeCount row
-  let playerVolumeCount = new PlayerVolumeByTransaction(tradeId);
-  playerVolumeCount.volume = totalVolumeTraded;
-  playerVolumeCount.timestamp = timeStampNow;
-  playerVolumeCount.playerQuestionId = questionId;
-  playerVolumeCount.save();
 }
 
-function updateInvestmentAmountOnBuy(
-  id: string,
-  tradeAmount: BigInt,
-  feeAmount: BigInt
-): void {
-  let accountDetails = Account.load(id);
-  if (accountDetails == null) {
-    log.error("User not found with walletId {}", [id]);
-    return;
-  }
-  let tradeAmountMinusFees = tradeAmount.minus(feeAmount);
-  accountDetails.investmentAmount = accountDetails.investmentAmount.plus(
-    tradeAmountMinusFees
-  );
-  accountDetails.save();
-}
-
-function updateInvestmentAmountOnSell(
-  id: string,
-  tradeAmount: BigInt,
-  feeAmount: BigInt
-): void {
-  let accountDetails = Account.load(id);
-  if (accountDetails == null) {
-    log.error("User not found with walletId {}", [id]);
-    return;
-  }
-  let tradeAmountPlusFees = tradeAmount.plus(feeAmount);
-  accountDetails.investmentAmount = accountDetails.investmentAmount.minus(
-    tradeAmountPlusFees
-  );
-  accountDetails.save();
-}
-
-function recordBuy(event: FPMMBuy): void {
-  let buy = new Transaction(event.transaction.hash.toHexString());
-  buy.type = TRADE_TYPE_BUY;
-  buy.timestamp = event.block.timestamp;
-  buy.market = event.address.toHexString();
-  buy.user = event.params.buyer.toHexString();
-  buy.tradeAmount = event.params.investmentAmount;
-  buy.feeAmount = event.params.feeAmount;
-  buy.outcomeIndex = event.params.outcomeIndex;
-  buy.outcomeTokensAmount = event.params.outcomeTokensBought;
-  buy.save();
-}
-
-function recordSell(event: FPMMSell): void {
+function recordSell(event: FPMMSell, netTradeAmount: BigInt): void {
   let sell = new Transaction(event.transaction.hash.toHexString());
   sell.type = TRADE_TYPE_SELL;
   sell.timestamp = event.block.timestamp;
@@ -208,6 +98,7 @@ function recordSell(event: FPMMSell): void {
   sell.user = event.params.seller.toHexString();
   sell.tradeAmount = event.params.returnAmount;
   sell.feeAmount = event.params.feeAmount;
+  sell.netTradeAmount = netTradeAmount;
   sell.outcomeIndex = event.params.outcomeIndex;
   sell.outcomeTokensAmount = event.params.outcomeTokensSold;
   sell.save();
@@ -354,9 +245,7 @@ export function handleBuy(event: FPMMBuy): void {
   }
 
   let oldAmounts = fpmm.outcomeTokenAmounts;
-  let investmentAmountMinusFees = event.params.investmentAmount.minus(
-    event.params.feeAmount
-  );
+  let investmentAmountMinusFees = event.params.netInvestmentAmount;
 
   let outcomeIndex = event.params.outcomeIndex.toI32();
 
@@ -417,20 +306,21 @@ export function handleBuy(event: FPMMBuy): void {
     event.params.buyer.toHexString(),
     event.block.timestamp
   );
-  recordBuy(event);
+  recordBuy(event, investmentAmountMinusFees);
   let pnlId = event.params.buyer
     .toHexString()
     .concat("-")
     .concat(event.address.toHexString())
     .concat("-")
     .concat(event.params.outcomeIndex.toString());
-  updateUserPlayerPnLTransaction(
+
+  updateUserPlayerTourHoldings(
     pnlId,
     event.params.questionId.toHexString(),
     event.params.buyer.toHexString(),
     investmentAmountMinusFees,
     event.params.outcomeTokensBought,
-    "Buy",
+    TRADE_TYPE_BUY,
     event.address.toHexString(),
     event.params.outcomeIndex
   );
@@ -460,9 +350,7 @@ export function handleSell(event: FPMMSell): void {
   }
 
   let oldAmounts = fpmm.outcomeTokenAmounts;
-  let returnAmountPlusFees = event.params.returnAmount.plus(
-    event.params.feeAmount
-  );
+  let returnAmountPlusFees = event.params.netReturnAmount;
 
   let outcomeIndex = event.params.outcomeIndex.toI32();
   let newAmounts = new Array<BigInt>(oldAmounts.length);
@@ -522,7 +410,7 @@ export function handleSell(event: FPMMSell): void {
     event.params.seller.toHexString(),
     event.block.timestamp
   );
-  recordSell(event);
+  recordSell(event, returnAmountPlusFees);
   let pnlId = event.params.seller
     .toHexString()
     .concat("-")
@@ -534,13 +422,13 @@ export function handleSell(event: FPMMSell): void {
     event.params.returnAmount,
     event.params.feeAmount
   );
-  updateUserPlayerPnLTransaction(
+  updateUserPlayerTourHoldings(
     pnlId,
     event.params.questionId.toHexString(),
     event.params.seller.toHexString(),
     returnAmountPlusFees,
     event.params.outcomeTokensSold,
-    "Sell",
+    TRADE_TYPE_SELL,
     event.address.toHexString(),
     event.params.outcomeIndex
   );
