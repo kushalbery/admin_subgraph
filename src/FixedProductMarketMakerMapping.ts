@@ -9,7 +9,6 @@ import {
   Condition,
   Player,
   TradePrice,
-  Account,
   PlayerVolume,
   PlayerVolumeByTransaction,
 } from "../generated/schema";
@@ -69,6 +68,26 @@ function recordBuy(event: FPMMBuy, netTradeAmount: BigInt): void {
   buy.outcomeIndex = event.params.outcomeIndex;
   buy.outcomeTokensAmount = event.params.outcomeTokensBought;
   buy.save();
+}
+
+function updatePlayerVolume(
+  timeStampNow: BigInt,
+  questionId: string,
+  totalVolumeTraded: BigInt,
+  tradeId: string
+): void {
+  let playerVolume = PlayerVolume.load(questionId);
+  if (playerVolume === null) {
+    let playerVolumeCount = new PlayerVolumeByTransaction(tradeId);
+    playerVolumeCount.volume = totalVolumeTraded;
+    playerVolumeCount.timestamp = timeStampNow;
+    playerVolumeCount.playerQuestionId = questionId;
+    playerVolumeCount.save();
+
+    let playerVolume = new PlayerVolume(questionId);
+    playerVolume.save();
+    return;
+  }
 }
 
 function recordSell(event: FPMMSell, netTradeAmount: BigInt): void {

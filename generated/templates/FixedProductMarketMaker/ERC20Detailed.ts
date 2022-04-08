@@ -36,6 +36,28 @@ export class Approval__Params {
   }
 }
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class Transfer extends ethereum.Event {
   get params(): Transfer__Params {
     return new Transfer__Params(this);
@@ -224,6 +246,21 @@ export class ERC20Detailed extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toString());
   }
 
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   symbol(): string {
     let result = super.call("symbol", "symbol():(string)", []);
 
@@ -327,14 +364,6 @@ export class ConstructorCall__Inputs {
   constructor(call: ConstructorCall) {
     this._call = call;
   }
-
-  get name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
 }
 
 export class ConstructorCall__Outputs {
@@ -380,6 +409,104 @@ export class ApproveCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class BurnCall extends ethereum.Call {
+  get inputs(): BurnCall__Inputs {
+    return new BurnCall__Inputs(this);
+  }
+
+  get outputs(): BurnCall__Outputs {
+    return new BurnCall__Outputs(this);
+  }
+}
+
+export class BurnCall__Inputs {
+  _call: BurnCall;
+
+  constructor(call: BurnCall) {
+    this._call = call;
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class BurnCall__Outputs {
+  _call: BurnCall;
+
+  constructor(call: BurnCall) {
+    this._call = call;
+  }
+}
+
+export class Burn1Call extends ethereum.Call {
+  get inputs(): Burn1Call__Inputs {
+    return new Burn1Call__Inputs(this);
+  }
+
+  get outputs(): Burn1Call__Outputs {
+    return new Burn1Call__Outputs(this);
+  }
+}
+
+export class Burn1Call__Inputs {
+  _call: Burn1Call;
+
+  constructor(call: Burn1Call) {
+    this._call = call;
+  }
+
+  get account(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class Burn1Call__Outputs {
+  _call: Burn1Call;
+
+  constructor(call: Burn1Call) {
+    this._call = call;
+  }
+}
+
+export class BurnFromCall extends ethereum.Call {
+  get inputs(): BurnFromCall__Inputs {
+    return new BurnFromCall__Inputs(this);
+  }
+
+  get outputs(): BurnFromCall__Outputs {
+    return new BurnFromCall__Outputs(this);
+  }
+}
+
+export class BurnFromCall__Inputs {
+  _call: BurnFromCall;
+
+  constructor(call: BurnFromCall) {
+    this._call = call;
+  }
+
+  get account(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class BurnFromCall__Outputs {
+  _call: BurnFromCall;
+
+  constructor(call: BurnFromCall) {
+    this._call = call;
   }
 }
 
@@ -456,6 +583,66 @@ export class IncreaseAllowanceCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class MintCall extends ethereum.Call {
+  get inputs(): MintCall__Inputs {
+    return new MintCall__Inputs(this);
+  }
+
+  get outputs(): MintCall__Outputs {
+    return new MintCall__Outputs(this);
+  }
+}
+
+export class MintCall__Inputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
+  }
+
+  get account(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class MintCall__Outputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
   }
 }
 
@@ -539,36 +726,32 @@ export class TransferFromCall__Outputs {
   }
 }
 
-export class MintCall extends ethereum.Call {
-  get inputs(): MintCall__Inputs {
-    return new MintCall__Inputs(this);
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
   }
 
-  get outputs(): MintCall__Outputs {
-    return new MintCall__Outputs(this);
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
-export class MintCall__Inputs {
-  _call: MintCall;
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: MintCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 
-  get account(): Address {
+  get newOwner(): Address {
     return this._call.inputValues[0].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
   }
 }
 
-export class MintCall__Outputs {
-  _call: MintCall;
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
 
-  constructor(call: MintCall) {
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }

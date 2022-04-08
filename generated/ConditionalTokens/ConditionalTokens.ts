@@ -100,6 +100,28 @@ export class ConditionResolution__Params {
   }
 }
 
+export class OwnershipTransferred extends ethereum.Event {
+  get params(): OwnershipTransferred__Params {
+    return new OwnershipTransferred__Params(this);
+  }
+}
+
+export class OwnershipTransferred__Params {
+  _event: OwnershipTransferred;
+
+  constructor(event: OwnershipTransferred) {
+    this._event = event;
+  }
+
+  get previousOwner(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get newOwner(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
 export class PayoutRedemption extends ethereum.Event {
   get params(): PayoutRedemption__Params {
     return new PayoutRedemption__Params(this);
@@ -535,6 +557,21 @@ export class ConditionalTokens extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  owner(): Address {
+    let result = super.call("owner", "owner():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_owner(): ethereum.CallResult<Address> {
+    let result = super.tryCall("owner", "owner():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   payoutDenominator(param0: Bytes): BigInt {
     let result = super.call(
       "payoutDenominator",
@@ -655,36 +692,6 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class AddAddressCall extends ethereum.Call {
-  get inputs(): AddAddressCall__Inputs {
-    return new AddAddressCall__Inputs(this);
-  }
-
-  get outputs(): AddAddressCall__Outputs {
-    return new AddAddressCall__Outputs(this);
-  }
-}
-
-export class AddAddressCall__Inputs {
-  _call: AddAddressCall;
-
-  constructor(call: AddAddressCall) {
-    this._call = call;
-  }
-
-  get _address(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class AddAddressCall__Outputs {
-  _call: AddAddressCall;
-
-  constructor(call: AddAddressCall) {
     this._call = call;
   }
 }
@@ -845,6 +852,32 @@ export class RedeemPositionsCall__Outputs {
   _call: RedeemPositionsCall;
 
   constructor(call: RedeemPositionsCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall extends ethereum.Call {
+  get inputs(): RenounceOwnershipCall__Inputs {
+    return new RenounceOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): RenounceOwnershipCall__Outputs {
+    return new RenounceOwnershipCall__Outputs(this);
+  }
+}
+
+export class RenounceOwnershipCall__Inputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class RenounceOwnershipCall__Outputs {
+  _call: RenounceOwnershipCall;
+
+  constructor(call: RenounceOwnershipCall) {
     this._call = call;
   }
 }
@@ -1051,6 +1084,36 @@ export class SplitPositionCall__Outputs {
   _call: SplitPositionCall;
 
   constructor(call: SplitPositionCall) {
+    this._call = call;
+  }
+}
+
+export class TransferOwnershipCall extends ethereum.Call {
+  get inputs(): TransferOwnershipCall__Inputs {
+    return new TransferOwnershipCall__Inputs(this);
+  }
+
+  get outputs(): TransferOwnershipCall__Outputs {
+    return new TransferOwnershipCall__Outputs(this);
+  }
+}
+
+export class TransferOwnershipCall__Inputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+
+  get newOwner(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class TransferOwnershipCall__Outputs {
+  _call: TransferOwnershipCall;
+
+  constructor(call: TransferOwnershipCall) {
     this._call = call;
   }
 }
