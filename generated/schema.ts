@@ -1111,6 +1111,7 @@ export class FixedProductMarketMaker extends Entity {
     this.set("outcomeTokenPrices", Value.fromBigDecimalArray(new Array(0)));
     this.set("lastActiveDay", Value.fromBigInt(BigInt.zero()));
     this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
+    this.set("season", Value.fromString(""));
   }
 
   save(): void {
@@ -1401,6 +1402,15 @@ export class FixedProductMarketMaker extends Entity {
     } else {
       this.set("poolMembers", Value.fromStringArray(<Array<string>>value));
     }
+  }
+
+  get season(): string {
+    let value = this.get("season");
+    return value!.toString();
+  }
+
+  set season(value: string) {
+    this.set("season", Value.fromString(value));
   }
 }
 
@@ -2016,6 +2026,7 @@ export class UserPlayerTourHolding extends Entity {
     this.set("tokens", Value.fromBigInt(BigInt.zero()));
     this.set("userPlayerHolding", Value.fromString(""));
     this.set("player", Value.fromString(""));
+    this.set("season", Value.fromString(""));
   }
 
   save(): void {
@@ -2119,6 +2130,15 @@ export class UserPlayerTourHolding extends Entity {
 
   set player(value: string) {
     this.set("player", Value.fromString(value));
+  }
+
+  get season(): string {
+    let value = this.get("season");
+    return value!.toString();
+  }
+
+  set season(value: string) {
+    this.set("season", Value.fromString(value));
   }
 }
 
@@ -2407,5 +2427,56 @@ export class PlayerVolumeByTransaction extends Entity {
 
   set playerQuestionId(value: string) {
     this.set("playerQuestionId", Value.fromString(value));
+  }
+}
+
+export class Season extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Season entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        "Cannot save Season entity with non-string ID. " +
+          'Considering using .toHex() to convert the "id" to a string.'
+      );
+      store.set("Season", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Season | null {
+    return changetype<Season | null>(store.get("Season", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fpmm(): Array<string> {
+    let value = this.get("fpmm");
+    return value!.toStringArray();
+  }
+
+  set fpmm(value: Array<string>) {
+    this.set("fpmm", Value.fromStringArray(value));
+  }
+
+  get userDetails(): Array<string> {
+    let value = this.get("userDetails");
+    return value!.toStringArray();
+  }
+
+  set userDetails(value: Array<string>) {
+    this.set("userDetails", Value.fromStringArray(value));
   }
 }

@@ -230,6 +230,8 @@ type FixedProductMarketMaker @entity {
 
   "Addresses which are supplying liquidity to the market maker"
   poolMembers: [FpmmPoolMembership!] @derivedFrom(field: "pool")
+
+  season: Season!
 }
 
 type MarketPosition @entity {
@@ -351,6 +353,7 @@ type UserPlayerTourHolding @entity {
   tokens: BigInt!
   userPlayerHolding: UserPlayerHolding!
   player: Player!
+  season: Season!
 }
 
 type Player @entity {
@@ -384,4 +387,12 @@ type PlayerVolumeByTransaction @entity {
   volume: BigInt!
   timestamp: BigInt!
   playerQuestionId: PlayerVolume!
+}
+
+type Season @entity {
+  "Factory address"
+  id: ID!
+  fpmm: [FixedProductMarketMaker!]! @derivedFrom(field: "season")
+  # fpmm: FixedProductMarketMaker!
+  userDetails: [UserPlayerTourHolding!]! @derivedFrom(field: "season")
 }

@@ -322,7 +322,8 @@ export function handleBuy(event: FPMMBuy): void {
     event.params.outcomeTokensBought,
     TRADE_TYPE_BUY,
     event.address.toHexString(),
-    event.params.outcomeIndex
+    event.params.outcomeIndex,
+    event.params.factoryAddress.toHexString()
   );
   updateInvestmentAmountOnBuy(
     event.params.buyer.toHexString(),
@@ -430,7 +431,8 @@ export function handleSell(event: FPMMSell): void {
     event.params.outcomeTokensSold,
     TRADE_TYPE_SELL,
     event.address.toHexString(),
-    event.params.outcomeIndex
+    event.params.outcomeIndex,
+    event.params.factoryAddress.toHexString()
   );
   updateGlobalVolume(
     event.params.returnAmount,

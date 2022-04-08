@@ -15,7 +15,8 @@ export function updateUserPlayerTourHoldings(
   tokensTraded: BigInt,
   txnType: string,
   fpmmId: string,
-  outcomeIndex: BigInt
+  outcomeIndex: BigInt,
+  factory: string
 ): void {
   let userPlayerTourHoldingObj = UserPlayerTourHolding.load(id);
   if (userPlayerTourHoldingObj == null) {
@@ -40,6 +41,7 @@ export function updateUserPlayerTourHoldings(
     newUserPlayerTourHoldingObj.tokens = tokensTraded;
     newUserPlayerTourHoldingObj.userPlayerHolding = userId + "-" + fpmmId;
     newUserPlayerTourHoldingObj.fpmmId = fpmmId;
+    newUserPlayerTourHoldingObj.season = factory;
     newUserPlayerTourHoldingObj.outcomeIndex = outcomeIndex;
     newUserPlayerTourHoldingObj.player = fpmmId;
     newUserPlayerTourHoldingObj.save();
